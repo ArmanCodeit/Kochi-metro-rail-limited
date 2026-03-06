@@ -1,0 +1,35 @@
+[
+  {
+    "trainId": "KM-01",
+    "name": "Aluva - M.G. Road Local",
+    "route": ["ALV","PUL","COM","SNJ","AMB","KAK","PAL","EDA","MUT","KAL","LIS","MGR","ERS","VYT","THY","SEA"],
+    "startTime": "06:00",
+    "frequencyMinutes": 8,
+    "status": "Running"
+  },
+  {
+    "trainId": "KM-02",
+    "name": "M.G. Road - Aluva Local",
+    "route": ["SEA","THY","VYT","ERS","MGR","LIS","KAL","MUT","EDA","PAL","KAK","AMB","SNJ","COM","PUL","ALV"],
+    "startTime": "06:05",
+    "frequencyMinutes": 10,
+    "status": "Running"
+  },
+  {
+    "trainId": "KM-EXP-01",
+    "name": "Palarivattom Express",
+    "route": ["ALV","PUL","COM","PAL","EDA","MGR","ERS"],
+    "startTime": "06:30",
+    "frequencyMinutes": 20,
+    "status": "Running",
+    "express": true
+  },
+  {
+    "trainId": "KM-VYT-CTR",
+    "name": "Vyttila Connector",
+    "route": ["VYT","MGR","PAL","EDA"],
+    "startTime": "06:20",
+    "frequencyMinutes": 12,
+    "status": "Running"
+  }
+]

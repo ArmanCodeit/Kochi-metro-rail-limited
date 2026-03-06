@@ -1,0 +1,271 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Caudex', serif;
+}
+
+.signin-container {
+    height: 100vh;
+    display: flex;
+    background: #ffffff;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* ── Media Side (Left) ── */
+.signin-media-side {
+    flex: 1;
+    position: relative;
+    display: none;
+    /* hidden on small screens */
+}
+
+@media (min-width: 900px) {
+    .signin-media-side {
+        display: block;
+    }
+}
+
+.signin-media-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(192, 244, 251, 0.4) 0%, rgba(185, 132, 250, 0.3) 100%);
+    z-index: 2;
+}
+
+.signin-image-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* ── Form Side (Right) ── */
+.signin-form-side {
+    flex: 1;
+    display: flex;
+    background: #ffffff;
+    padding: 2rem;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.signin-form-wrapper {
+    max-width: 480px;
+    width: 100%;
+    margin: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.signin-header {
+    margin-bottom: 2.5rem;
+}
+
+.signin-header h1 {
+    color: #630c5e;
+    /* Deep purple matching image logic */
+    font-size: 3.2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.signin-header p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+    font-family: 'Urbanist', sans-serif;
+    /* Keep a readable font for small text if desired, or all Caudex */
+}
+
+/* ── Form Inputs ── */
+.signin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #718096;
+    font-size: 0.95rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.captcha-input {
+    width: 100%;
+    padding: 1.1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    color: #2d3748;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #b984fa;
+    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+}
+
+.form-group input.input-error {
+    border-color: #dc3545;
+}
+
+/* ── Password Toggle ── */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #a0aec0;
+}
+
+/* ── CAPTCHA Block ── */
+.captcha-group {
+    margin-bottom: 0px;
+}
+
+.captcha-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.captcha-image-wrapper {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 52px;
+    background: white;
+    display: flex;
+    align-items: center;
+}
+
+.captcha-image-wrapper img {
+    height: 100%;
+    display: block;
+}
+
+.refresh-captcha {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    height: 100%;
+    width: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #e2e8f0;
+    transition: background 0.2s;
+}
+
+.refresh-captcha:hover {
+    background: #f1f5f9;
+}
+
+/* ── Messages & Links ── */
+.error-text {
+    color: #e53e3e;
+    font-size: 0.85rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.error-message {
+    background: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #feb2b2;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.forgot-password {
+    text-align: right;
+    font-size: 0.95rem;
+    margin-top: -10px;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.forgot-text {
+    color: #718096;
+}
+
+.forgot-password a {
+    color: #630c5e;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* ── Submit Button ── */
+.btn-signin-submit {
+    padding: 1.1rem;
+    background: #630c5e;
+    /* Matching the deep purple button */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 5px;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.btn-signin-submit:hover:not(:disabled) {
+    background: #4a0746;
+}
+
+.btn-signin-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Bottom Link ── */
+.signup-link {
+    text-align: center;
+    color: #718096;
+    font-size: 0.95rem;
+    font-family: 'Urbanist', sans-serif;
+    margin-top: 10px;
+}
+
+.signup-link a {
+    color: #630c5e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Overall page style */
+.contact-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ecfdfd;
+    /* Light cyan matching the image */
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Hero Section */
+.contact-hero-wrapper {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 40px;
+    height: 180px;
+}
+
+.hero-img-left {
+    height: 140px;
+    object-fit: contain;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.hero-img-right {
+    height: 140px;
+    object-fit: contain;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.contact-hero-center {
+    flex: 1;
+    text-align: center;
+    z-index: 2;
+    padding: 0 160px;
+    /* Space for images */
+}
+
+.contact-hero-center h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.contact-hero-center p {
+    font-size: 1rem;
+    color: #475569;
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Main Container Layout */
+.contact-container {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+/* Form Card */
+.contact-form-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 40px 45px;
+    flex: 1;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+.contact-form-card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 25px;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    color: #334155;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group label span {
+    color: #ef4444;
+    /* Asterisk red */
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #0ea5e9;
+    background-color: #ffffff;
+}
+
+.phone-input {
+    display: flex;
+}
+
+.phone-prefix {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    padding: 12px 14px;
+    color: #64748b;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.phone-input input {
+    border-radius: 0 6px 6px 0;
+}
+
+/* Attachment Group */
+.attachment-group {
+    margin-top: 10px;
+}
+
+.attachment-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    padding: 6px 14px;
+}
+
+.upload-btn {
+    background-color: #0ea5e9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-btn:hover {
+    background-color: #0284c7;
+}
+
+.attachment-info {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.attachment-info strong {
+    color: #334155;
+}
+
+/* Footer Section with Captcha and Submit */
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 15px;
+}
+
+.captcha-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.captcha-input-row {
+    display: flex;
+    gap: 12px;
+}
+
+.captcha-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.captcha-text {
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    font-family: monospace;
+    color: #334155;
+}
+
+.captcha-input {
+    width: 120px !important;
+    padding: 10px 14px !important;
+    background-color: #f8fafc !important;
+}
+
+.captcha-icons {
+    display: flex;
+    gap: 10px;
+    padding-left: 5px;
+}
+
+.captcha-icons .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.captcha-icons .icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.submit-btn {
+    background-color: #0ea5e9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 36px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-top: 50px;
+    /* pushes button down to match image spacing */
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #0284c7;
+}
+
+/* Contact Info Side */
+.contact-info-side {
+    width: 320px;
+    padding-top: 40px;
+}
+
+.info-logo {
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+.info-block h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.red-title {
+    color: #f43f5e;
+}
+
+.dark-title {
+    color: #475569;
+}
+
+.info-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.info-item a {
+    color: #475569;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.info-item a:hover {
+    text-decoration: underline;
+}
+
+.info-item p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Responsive constraints */
+@media (max-width: 992px) {
+    .contact-container {
+        flex-direction: column;
+    }
+
+    .contact-info-side {
+        width: 100%;
+        padding-top: 0;
+    }
+
+    .hero-img-left,
+    .hero-img-right {
+        display: none;
+    }
+
+    .contact-hero-center {
+        padding: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .submit-btn {
+        margin-top: 0;
+        width: 100%;
+    }
+}

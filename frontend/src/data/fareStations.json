@@ -1,0 +1,11 @@
+[
+  { "id": 1, "name": "Aluva", "code": "ALV", "location": "Aluva", "area": "Ernakulam" },
+  { "id": 2, "name": "Pulinchodu", "code": "PUL", "location": "Pulinchodu", "area": "Ernakulam" },
+  { "id": 3, "name": "Companypady", "code": "COM", "location": "Kochi", "area": "Ernakulam" },
+  { "id": 4, "name": "SN Junction", "code": "SNJ", "location": "Kochi", "area": "Ernakulam" },
+  { "id": 5, "name": "Ambattukavu", "code": "AMB", "location": "Kochi", "area": "Ernakulam" },
+  { "id": 6, "name": "Kakkanad", "code": "KAK", "location": "Kakkanad", "area": "Ernakulam" },
+  { "id": 7, "name": "Palarivattom", "code": "PAL", "location": "Kochi", "area": "Ernakulam" },
+  { "id": 8, "name": "Edapally", "code": "EDA", "location": "Edapally", "area": "Ernakulam" },
+  { "id": 9, "name": "M.G. Road", "code": "MGR", "location": "M G Road", "area": "Ernakulam" }
+]

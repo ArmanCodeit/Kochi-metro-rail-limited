@@ -1,0 +1,1315 @@
+.search-metro-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    font-family: 'Urbanist', sans-serif;
+}
+
+.search-header {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+}
+
+.logo-section p {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-section span {
+    font-size: 0.95rem;
+}
+
+.btn-back {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+}
+
+.btn-back:hover {
+    background: white;
+    color: #0d9488;
+    transform: translateX(-3px);
+}
+
+.btn-logout {
+    padding: 0.6rem 1.3rem;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: #ff5500;
+    transform: translateY(-2px);
+}
+
+.search-section {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.search-section h2 {
+    color: #0d9488;
+    font-size: 2rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 700;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.form-row:last-of-type {
+    grid-template-columns: 1fr 1fr;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.85rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.5rem;
+    background-color: white;
+}
+
+.form-group select:hover {
+    cursor: pointer;
+    background-color: #f0fdfa;
+}
+
+.form-group select option {
+    padding: 0.75rem;
+    background: white;
+    color: #333;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+    border-color: #dc3545;
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 0.85rem;
+}
+
+.swap-button {
+    display: flex;
+    align-items: flex-end;
+}
+
+.swap-button button {
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 2px solid #0d9488;
+    color: #0d9488;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(13, 148, 136, 0.15);
+}
+
+.swap-button button:hover {
+    background: #0d9488;
+    color: white;
+    transform: rotate(180deg) scale(1.05);
+    box-shadow: 0 6px 14px rgba(13, 148, 136, 0.25);
+}
+
+.btn-search {
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
+    font-family: 'Urbanist', sans-serif;
+    letter-spacing: 0.04em;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(13, 148, 136, 0.35);
+}
+
+.results-section {
+    max-width: 1000px;
+    margin: 0 auto 2rem;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.results-section h3 {
+    color: #0d9488;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.fare-info {
+    background: linear-gradient(135deg, #f0fdfa 0%, #e6fbf7 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 5px solid #0d9488;
+}
+
+.fare-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.fare-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.fare-item.total {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    color: white;
+}
+
+.fare-item .label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.fare-item.total .label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.fare-item .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0d9488;
+}
+
+.fare-item.total .value {
+    color: white;
+}
+
+.metro-services {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    border-color: #0d9488;
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15);
+    transform: translateY(-5px);
+}
+
+.time-info {
+    margin-bottom: 1rem;
+}
+
+.time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.time .departure,
+.time .arrival {
+    font-size: 1.2rem;
+    color: #0d9488;
+}
+
+.time .arrow {
+    color: #666;
+}
+
+.duration {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.service-details {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.service-details .stops {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.btn-book {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, #ff6b00 0%, #ff5500 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-book:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .user-section {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .swap-button {
+        justify-content: center;
+    }
+
+    .metro-services {
+        grid-template-columns: 1fr;
+    }
+
+    .fare-details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Modal Overlay and Booking Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Live trains panel */
+.live-trains-panel {
+    max-width: 1000px;
+    margin: 1rem auto;
+    padding: 1rem 1.25rem;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-left: 5px solid #0066b3;
+}
+
+.live-trains-panel h3 {
+    margin: 0 0 0.75rem 0;
+    color: #0d9488;
+    font-size: 1.4rem;
+}
+
+.live-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.live-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    background: #f7fbff;
+    border: 1px solid rgba(0, 102, 179, 0.06);
+}
+
+.live-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.live-sub {
+    color: #444;
+    font-size: 0.9rem;
+}
+
+.live-right {
+    text-align: right;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.live-time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.live-empty {
+    color: #666;
+    font-style: italic;
+}
+
+/* --- Ticket Summary Modal (Matches Redesign Image) --- */
+.ts-modal-container {
+    background: #f4f6f8;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.ts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.ts-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.ts-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.ts-content {
+    display: flex;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .ts-content {
+        flex-direction: column;
+    }
+}
+
+.ts-left-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ts-right-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Left Column Cards */
+.ts-journey-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.ts-trip-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.ts-active-text {
+    color: #22c55e;
+    letter-spacing: 0.5px;
+}
+
+.ts-dot {
+    color: #cbd5e1;
+}
+
+.ts-line-name {
+    color: #64748b;
+}
+
+.ts-route-big {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.ts-station {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ts-arrow {
+    color: #22c55e;
+    font-size: 1.2rem;
+}
+
+.ts-time-info {
+    display: flex;
+    gap: 3rem;
+}
+
+.ts-time-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.ts-time-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.ts-time-val {
+    font-size: 0.95rem;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.ts-middle-cards {
+    display: flex;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .ts-middle-cards {
+        flex-direction: column;
+    }
+}
+
+.ts-traveler-card,
+.ts-tickets-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    flex: 1;
+}
+
+.ts-traveler-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.ts-traveler-icon {
+    background: #e6fcf0;
+    padding: 0.8rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ts-traveler-info label {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+}
+
+.ts-name-input {
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    outline: none;
+    margin-bottom: 0.3rem;
+    font-family: inherit;
+}
+
+.ts-name-input::placeholder {
+    color: #cbd5e1;
+}
+
+.ts-passenger-id {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.ts-tickets-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+}
+
+.ts-counter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ts-counter {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 0.3rem;
+    border: 1px solid #e2e8f0;
+}
+
+.ts-counter-btn {
+    background: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #334155;
+    transition: all 0.2s;
+}
+
+.ts-counter-btn:hover {
+    background: #f1f5f9;
+}
+
+.ts-count-val {
+    margin: 0 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.ts-unit-price {
+    text-align: right;
+}
+
+.ts-price-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+}
+
+.ts-price-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #22c55e;
+}
+
+/* Right Column Cards */
+.ts-payment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.ts-payment-title {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.ts-payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.ts-pm-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ts-pm-option.active {
+    border-color: #22c55e;
+    background: #f0fdf4;
+}
+
+.ts-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ts-pm-option.active .ts-radio {
+    border-color: #22c55e;
+}
+
+.ts-radio-inner {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.ts-pm-option.active .ts-radio-inner {
+    background: #22c55e;
+}
+
+.ts-pm-icon {
+    color: #64748b;
+    display: flex;
+}
+
+.ts-pm-option.active .ts-pm-icon {
+    color: #22c55e;
+}
+
+.ts-pm-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.ts-pm-option.active .ts-pm-name {
+    color: #0f172a;
+}
+
+.ts-summary-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.ts-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+.ts-grand-total {
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 1.1rem;
+    align-items: center;
+}
+
+.ts-grand-val {
+    font-size: 1.4rem;
+    color: #22c55e;
+    font-weight: 800;
+}
+
+.ts-pay-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.ts-pay-btn:hover {
+    background: #16a34a;
+}
+
+.ts-pay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ts-secure-text {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 1rem;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.ts-help-card {
+    background: #f0fdf4;
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.ts-help-icon {
+    margin-top: 0.2rem;
+}
+
+.ts-help-text strong {
+    display: block;
+    color: #0f172a;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.ts-help-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.service-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.service-details .stops {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* New Detailed Train Display Styles */
+.metro-services {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.service-card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.train-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.line-info h4 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.3rem;
+}
+
+.line-route {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.crowd-level {
+    background: #fff3cd;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Journey Route */
+.journey-route {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 10px;
+}
+
+.station {
+    flex: 1;
+    text-align: center;
+}
+
+.station-name {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.station-code {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.route-line {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: #0d9488;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #0d9488;
+    flex-shrink: 0;
+}
+
+.line {
+    flex: 1;
+    height: 3px;
+    background: linear-gradient(90deg, #0d9488, #ddd);
+    border-radius: 2px;
+}
+
+.stops-badge {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0d9488;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Service Details Grid */
+.service-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background: #f0f7ff;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.detail-item .value {
+    font-weight: 700;
+    color: #0d9488;
+    font-size: 1.1rem;
+}
+
+.intermediate-stations {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #0d9488;
+}
+
+.intermediate-stations h5 {
+    margin: 0 0 0.8rem 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.stations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+}
+
+.station-tag {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.station-tag:hover {
+    border-color: #0d9488;
+    background: #f0fdfa;
+    color: #0d9488;
+}
+
+/* Timetable */
+.timetable-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border-left: 4px solid #ff6b00;
+}
+
+.timetable-section h5 {
+    margin: 0 0 0.8rem 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.timetable {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.timetable-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.timetable-row:last-child {
+    border-bottom: none;
+}
+
+.departure-time {
+    font-weight: 700;
+    color: #0d9488;
+    min-width: 70px;
+}
+
+.duration {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.status {
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.timetable-footer {
+    padding: 0.8rem 1rem;
+    background: #f0fdfa;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #0d9488;
+    font-weight: 600;
+    border-top: 1px solid #ddd;
+}
+
+/* Facilities */
+.facilities-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+.facilities-section h5 {
+    margin: 0 0 0.8rem 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.8rem;
+}
+
+.facility-tag {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.facility-tag:hover {
+    background: #f0fdfa;
+    border-color: #0d9488;
+}
+
+/* Travel Guide */
+.guide-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f0f8ff;
+    border-radius: 10px;
+    border-left: 4px solid #17a2b8;
+}
+
+.guide-section h5 {
+    margin: 0 0 0.8rem 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.guide-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.guide-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+.guide-content strong {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Book Button */
+.btn-book {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #ff6b00 0%, #ff5500 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+}
+
+.btn-book:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+}
+
+.btn-book:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .train-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .crowd-level {
+        align-self: flex-start;
+    }
+
+    .journey-route {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .route-line {
+        flex-direction: column;
+        height: auto;
+        gap: 0.5rem;
+    }
+
+    .route-line .line {
+        width: 2px;
+        height: 30px;
+        margin: 0.5rem 0;
+    }
+
+    .service-details {
+        grid-template-columns: 1fr;
+    }
+
+    .stations-grid,
+    .facilities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .timetable-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+}

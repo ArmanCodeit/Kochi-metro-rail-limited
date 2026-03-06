@@ -1,0 +1,635 @@
+/* Live Service & Location Tracking */
+.live-service-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    padding: 20px;
+}
+
+.live-service-header {
+    max-width: 1400px;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.live-service-header h2 {
+    font-size: 2rem;
+    color: #0066b3;
+    margin: 0 0 10px 0;
+}
+
+.live-service-header p {
+    color: #666;
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.live-service-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 300px 1fr 280px;
+    gap: 20px;
+}
+
+/* Left Panel */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.line-selector,
+.service-status,
+.active-trains {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.line-selector h3,
+.service-status h3,
+.active-trains h3 {
+    margin: 0 0 16px 0;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #0066b3;
+    padding-bottom: 10px;
+}
+
+.line-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.line-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-left: 4px solid;
+    border-radius: 6px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #333;
+}
+
+.line-btn:hover {
+    background: #e8eef5;
+}
+
+.line-btn.active {
+    background: #e8f0fb;
+    border-color: #0066b3 !important;
+}
+
+.line-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.line-name {
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.status-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.status-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.status-value {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.status-value.running {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.trains-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.trains-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.trains-list::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 3px;
+}
+
+.trains-list::-webkit-scrollbar-thumb {
+    background: #0066b3;
+    border-radius: 3px;
+}
+
+.train-info-card {
+    background: linear-gradient(135deg, #f0f6ff 0%, #f5faff 100%);
+    border: 1px solid #d0dff0;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.train-info-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 102, 179, 0.15);
+    border-color: #0066b3;
+}
+
+.train-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.train-id {
+    font-weight: 600;
+    color: #0066b3;
+    font-size: 0.95rem;
+}
+
+.train-status {
+    font-size: 0.85rem;
+    color: #27ae60;
+}
+
+.train-details p {
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.crowd-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.crowd-label {
+    font-size: 0.85rem;
+    color: #666;
+    min-width: 70px;
+}
+
+.crowd-bar {
+    flex: 1;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.crowd-fill {
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.crowd-text {
+    font-size: 0.8rem;
+    color: #666;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Center Panel */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.station-map,
+.station-info-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.station-map h3,
+.station-info-panel h3 {
+    margin: 0 0 16px 0;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #0066b3;
+    padding-bottom: 10px;
+}
+
+.metro-line-track {
+    position: relative;
+    height: 120px;
+    background: linear-gradient(90deg, #f0f6ff 0%, #f5faff 100%);
+    border-radius: 8px;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.track-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0066b3, #003f7f);
+    transform: translateY(-50%);
+}
+
+.station-point-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+.station-point {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #0066b3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.station-point:hover {
+    width: 36px;
+    height: 36px;
+    box-shadow: 0 4px 12px rgba(0, 102, 179, 0.3);
+}
+
+.station-point.selected {
+    width: 40px;
+    height: 40px;
+    background: #0066b3;
+    border-color: #003f7f;
+    box-shadow: 0 0 0 8px rgba(0, 102, 179, 0.1);
+}
+
+.train-indicator {
+    font-size: 18px;
+    animation: trainMove 2s infinite;
+}
+
+@keyframes trainMove {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.station-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    margin-bottom: 8px;
+}
+
+.station-point:hover .station-tooltip,
+.station-point.selected .station-tooltip {
+    opacity: 1;
+}
+
+.station-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.station-header h3 {
+    margin: 0;
+    color: #0066b3;
+    font-size: 1.3rem;
+}
+
+.station-code {
+    background: #f0f6ff;
+    color: #0066b3;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.next-trains-section {
+    margin-bottom: 20px;
+}
+
+.next-trains-section h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.trains-table {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.train-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 40px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.train-number {
+    font-weight: 600;
+    color: #0066b3;
+    font-size: 0.9rem;
+}
+
+.train-time {
+    text-align: center;
+}
+
+.arrival-time {
+    background: #0066b3;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.crowd-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: auto;
+}
+
+.no-trains {
+    color: #999;
+    text-align: center;
+    padding: 20px 10px;
+    font-style: italic;
+}
+
+.station-services {
+    margin-top: 20px;
+}
+
+.station-services h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.service-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid #e0e0e0;
+}
+
+.service-item:hover {
+    background: #f0f6ff;
+    border-color: #0066b3;
+}
+
+.service-item.unavailable {
+    opacity: 0.5;
+    background: #f5f5f5;
+}
+
+.service-icon {
+    font-size: 24px;
+}
+
+.service-name {
+    font-size: 0.75rem;
+    text-align: center;
+    color: #333;
+    font-weight: 500;
+}
+
+.available-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #27ae60;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Right Panel */
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h3 {
+    margin: 0 0 12px 0;
+    color: #1a1a1a;
+    font-size: 1rem;
+    border-bottom: 2px solid #0066b3;
+    padding-bottom: 8px;
+}
+
+.crowd-guide-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.crowd-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.crowd-guide-item strong {
+    display: block;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.crowd-guide-item p {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.travel-tips ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.travel-tips li {
+    padding: 8px 0;
+    color: #333;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+}
+
+.travel-tips li:last-child {
+    border-bottom: none;
+}
+
+.emergency-info .contact-info {
+    background: #fff3cd;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #ff6b35;
+}
+
+.emergency-info p {
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.emergency-info .phone {
+    font-weight: 600;
+    color: #e74c3c;
+    font-size: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .live-service-content {
+        grid-template-columns: 1fr;
+    }
+
+    .left-panel,
+    .right-panel {
+        order: 2;
+    }
+
+    .center-panel {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .metro-line-track {
+        height: 80px;
+        padding: 30px 10px;
+    }
+
+    .station-point {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+    }
+
+    .station-tooltip {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .live-service-container {
+        padding: 10px;
+    }
+
+    .station-map,
+    .station-info-panel,
+    .line-selector,
+    .service-status,
+    .active-trains,
+    .info-card {
+        padding: 12px;
+    }
+
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .train-row {
+        grid-template-columns: 1fr 70px;
+        gap: 8px;
+    }
+
+    .crowd-dot {
+        display: none;
+    }
+}

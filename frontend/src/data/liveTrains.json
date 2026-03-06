@@ -1,0 +1,4 @@
+[
+  { "trainId": "T1", "name": "Train 1", "currentStation": "Aluva", "nextStop": "Pulinchodu", "delayedByMinutes": 0, "timestamp": "2025-12-15T10:00:00Z" },
+  { "trainId": "T2", "name": "Train 2", "currentStation": "Palarivattom", "nextStop": "Edapally", "delayedByMinutes": 2, "timestamp": "2025-12-15T10:02:00Z" }
+]

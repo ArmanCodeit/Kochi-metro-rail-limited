@@ -1,0 +1,114 @@
+[
+  {
+    "stationId": "ALV",
+    "name": "Aluva",
+    "code": "ALV",
+    "line": "Line 1",
+    "order": 1
+  },
+  {
+    "stationId": "PUL",
+    "name": "Pulinchodu",
+    "code": "PUL",
+    "line": "Line 1",
+    "order": 2
+  },
+  {
+    "stationId": "COM",
+    "name": "Companypady",
+    "code": "COM",
+    "line": "Line 1",
+    "order": 3
+  },
+  {
+    "stationId": "SNJ",
+    "name": "SN Junction",
+    "code": "SNJ",
+    "line": "Line 1",
+    "order": 4
+  },
+  {
+    "stationId": "AMB",
+    "name": "Ambattukavu",
+    "code": "AMB",
+    "line": "Line 1",
+    "order": 5
+  },
+  {
+    "stationId": "KAK",
+    "name": "Kakkanad",
+    "code": "KAK",
+    "line": "Line 1",
+    "order": 6
+  },
+  {
+    "stationId": "PAL",
+    "name": "Palarivattom",
+    "code": "PAL",
+    "line": "Line 1",
+    "order": 7
+  },
+  {
+    "stationId": "EDA",
+    "name": "Edapally",
+    "code": "EDA",
+    "line": "Line 1",
+    "order": 8
+  },
+  {
+    "stationId": "MUT",
+    "name": "Muttom",
+    "code": "MUT",
+    "line": "Line 1",
+    "order": 9
+  },
+  {
+    "stationId": "KAL",
+    "name": "Kaloor",
+    "code": "KAL",
+    "line": "Line 1",
+    "order": 10
+  },
+  {
+    "stationId": "LIS",
+    "name": "Lissie",
+    "code": "LIS",
+    "line": "Line 1",
+    "order": 11
+  },
+  {
+    "stationId": "MGR",
+    "name": "M.G. Road",
+    "code": "MGR",
+    "line": "Line 1",
+    "order": 12
+  },
+  {
+    "stationId": "ERS",
+    "name": "Ernakulam South",
+    "code": "ERS",
+    "line": "Line 1",
+    "order": 13
+  },
+  {
+    "stationId": "VYT",
+    "name": "Vyttila",
+    "code": "VYT",
+    "line": "Vyttila Extension",
+    "order": 14
+  },
+  {
+    "stationId": "THY",
+    "name": "Thykoodam",
+    "code": "THY",
+    "line": "Vyttila Extension",
+    "order": 15
+  },
+  {
+    "stationId": "SEA",
+    "name": "Seaport",
+    "code": "SEA",
+    "line": "Vyttila Extension",
+    "order": 16
+  }
+]

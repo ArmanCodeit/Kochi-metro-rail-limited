@@ -1,0 +1,45 @@
+[
+  {
+    "trainNumber": "KMRL-101",
+    "name": "Aluva Express",
+    "route": ["Aluva","Pulinchodu","Companypady","SN Junction","Ambattukavu","Palarivattom","Edapally","M.G. Road"],
+    "stopsWithTimes": {
+      "Aluva": "06:00",
+      "Pulinchodu": "06:05",
+      "Companypady": "06:10",
+      "SN Junction": "06:15",
+      "Ambattukavu": "06:20",
+      "Palarivattom": "06:25",
+      "Edapally": "06:30",
+      "M.G. Road": "06:35"
+    }
+  },
+  {
+    "trainNumber": "KMRL-102",
+    "name": "Harbour Local",
+    "route": ["M.G. Road","Lissie","Kaloor","Muttom","Edapally","Palarivattom","Kakkanad"],
+    "stopsWithTimes": {
+      "M.G. Road": "06:15",
+      "Lissie": "06:20",
+      "Kaloor": "06:25",
+      "Muttom": "06:30",
+      "Edapally": "06:35",
+      "Palarivattom": "06:40",
+      "Kakkanad": "06:45"
+    }
+  },
+  {
+    "trainNumber": "KMRL-103",
+    "name": "City Connector",
+    "route": ["Aluva","Pulinchodu","Companypady","Palarivattom","Vyttila","Thykoodam","Seaport"],
+    "stopsWithTimes": {
+      "Aluva": "07:00",
+      "Pulinchodu": "07:05",
+      "Companypady": "07:10",
+      "Palarivattom": "07:20",
+      "Vyttila": "07:25",
+      "Thykoodam": "07:30",
+      "Seaport": "07:35"
+    }
+  }
+]

@@ -1,0 +1,308 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Caudex', serif;
+}
+
+.signup-container {
+    height: 100vh;
+    display: flex;
+    background: #ffffff;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* ── Media Side (Left) ── */
+.signup-media-side {
+    flex: 1;
+    position: relative;
+    display: none;
+    /* hidden on small screens */
+}
+
+@media (min-width: 900px) {
+    .signup-media-side {
+        display: block;
+    }
+}
+
+.signup-media-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(192, 244, 251, 0.4) 0%, rgba(185, 132, 250, 0.3) 100%);
+    z-index: 2;
+}
+
+.signup-image-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* ── Form Side (Right) ── */
+.signup-form-side {
+    flex: 1;
+    display: flex;
+    background: #ffffff;
+    padding: 2rem;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.signup-form-wrapper {
+    max-width: 480px;
+    width: 100%;
+    margin: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.signup-header {
+    margin-bottom: 2.5rem;
+}
+
+.signup-header h1 {
+    color: #630c5e;
+    /* Deep purple matching image logic */
+    font-size: 3.2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.signup-header p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+/* ── Form Inputs ── */
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #718096;
+    font-size: 0.95rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 1.1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    color: #2d3748;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #b984fa;
+    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+}
+
+.form-group input.input-error {
+    border-color: #dc3545;
+}
+
+/* ── Password Toggle ── */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #a0aec0;
+}
+
+
+/* ── Messages & Links ── */
+.error-text {
+    color: #e53e3e;
+    font-size: 0.85rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.error-message {
+    background: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #feb2b2;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.strength-indicator {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.strength-indicator.strength-weak {
+    background: #ffe0e0;
+    color: #dc3545;
+}
+
+.strength-indicator.strength-fair {
+    background: #fff3cd;
+    color: #ff9800;
+}
+
+.strength-indicator.strength-good {
+    background: #d4edda;
+    color: #28a745;
+}
+
+.strength-indicator.strength-strong {
+    background: #d1ecf1;
+    color: #0066b3;
+}
+
+.password-requirements {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.password-requirements p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    font-size: 0.8rem;
+    color: #999;
+    margin: 0.3rem 0;
+}
+
+.password-requirements li.valid {
+    color: #28a745;
+}
+
+/* User Type Selection Styles */
+.form-select {
+    padding: 1.1rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    color: #2d3748;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.form-select:hover {
+    border-color: #b984fa;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #b984fa;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+}
+
+.form-group.checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.form-group.checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-group.checkbox label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* ── Submit Button ── */
+.btn-create-account {
+    padding: 1.1rem;
+    background: #630c5e;
+    /* Matching the deep purple button */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 5px;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.btn-create-account:hover {
+    background: #4a0746;
+}
+
+.btn-create-account:active {
+    transform: translateY(0);
+}
+
+/* ── Bottom Link ── */
+.signin-link {
+    text-align: center;
+    color: #718096;
+    font-size: 0.95rem;
+    font-family: 'Urbanist', sans-serif;
+    margin-top: 10px;
+}
+
+.signin-link a {
+    color: #630c5e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.signin-link a:hover {
+    text-decoration: underline;
+}

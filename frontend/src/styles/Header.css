@@ -1,0 +1,679 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER ROOT
+   ───────────────────────────────────────────── */
+.main-header {
+    width: 100%;
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 4px 24px rgba(0, 60, 130, 0.15);
+    background: #fff;
+}
+
+/* ─────────────────────────────────────────────
+   TIER 1 · TOP UTILITY BAR
+   ───────────────────────────────────────────── */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 32px;
+    background: #fff;
+    border-bottom: 1px solid #eaeff5;
+    font-size: 12px;
+    color: #4a6080;
+    min-height: 32px;
+}
+
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.social-icons {
+    display: flex;
+    gap: 5px;
+}
+
+.social-icons span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #0066b3, #00a8c5);
+    color: #fff;
+    font-size: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    user-select: none;
+}
+
+.social-icons span:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.top-right span {
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.top-right span:hover {
+    color: #0057a8;
+}
+
+.top-right .divider {
+    color: #b0c8e4;
+    cursor: default;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER BODY — 3-Column Grid
+   ───────────────────────────────────────────── */
+.header-body {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: stretch;
+    background: #fff;
+    width: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   LEFT COLUMN — Logo
+   ───────────────────────────────────────────── */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 28px 12px 32px;
+    cursor: pointer;
+    flex-shrink: 0;
+    align-self: stretch;
+    background: #fff;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.header-left:hover {
+    background: #f4f9ff;
+}
+
+/* KMR Logo image */
+.kmr-logo-img {
+    height: 68px;
+    width: auto;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 87, 168, 0.18));
+    transition: filter 0.2s;
+}
+
+.header-left:hover .kmr-logo-img {
+    filter: drop-shadow(0 4px 12px rgba(0, 87, 168, 0.28));
+}
+
+/* Logo text stack */
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.logo-title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #0057a8;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.logo-subtitle {
+    font-size: 0.78rem;
+    color: #5a7a9a;
+    font-weight: 600;
+    margin-top: 3px;
+}
+
+.logo-tagline {
+    font-size: 0.68rem;
+    color: #00a859;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   MIDDLE COLUMN — Two rows
+   ───────────────────────────────────────────── */
+.header-middle {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    min-width: 0;
+}
+
+/* ── Middle Row 1: Feedback + Helpline + Search ── */
+.middle-top-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 20px;
+    background: #fff;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Feedback button */
+.feedback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #e63946;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: inherit;
+    border-radius: 6px;
+    cursor: default;
+    /* Note: cursor: default removes the hover clicking effect */
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+}
+
+.feedback-btn:hover {
+    background: #e63946 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    cursor: default !important;
+}
+
+.feedback-icon {
+    font-size: 0.9rem;
+}
+
+/* Emergency image (replaces helpline box) */
+.emergency-img {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: transform 0.2s, filter 0.2s;
+    filter: drop-shadow(0 2px 6px rgba(0, 87, 168, 0.15));
+}
+
+.emergency-img:hover {
+    transform: translateY(-2px) scale(1.04);
+    filter: drop-shadow(0 5px 12px rgba(230, 57, 70, 0.28));
+}
+
+/* Search bar — block border, icon left, text submit */
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 2px solid #222;
+    border-radius: 0;
+    overflow: hidden;
+    background: #fff;
+    min-width: 220px;
+    flex-shrink: 0;
+    flex: 1;
+    max-width: 320px;
+    transition: border-color 0.15s;
+}
+
+.search-box:focus-within {
+    border-color: #000;
+}
+
+.search-box input {
+    border: none;
+    background: transparent;
+    padding: 9px 6px 9px 12px;
+    font-size: 0.84rem;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+    color: #111;
+}
+
+.search-box input::placeholder {
+    color: #999;
+}
+
+/* Black SVG icon button on the right */
+.main-header .search-icon-btn {
+    border: none !important;
+    border-left: 2px solid #222 !important;
+    background: transparent !important;
+    color: #111 !important;
+    padding: 0 12px !important;
+    height: 100% !important;
+    min-height: 38px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    transition: background 0.15s !important;
+    border-radius: 0 !important;
+}
+
+.main-header .search-icon-btn:hover {
+    background: transparent !important;
+}
+
+
+
+/* ── Middle Row 2: Navigation links ── */
+.nav-bar {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border-top: 1px solid #eaeff5;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    min-height: 44px;
+}
+
+.nav-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #3a5070;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    letter-spacing: 0.2px;
+}
+
+.nav-link:hover {
+    color: #0057a8;
+    background: #f0f7ff;
+    border-bottom-color: #0057a8;
+}
+
+.nav-link.active {
+    color: #0057a8;
+    background: #eaf3ff;
+    border-bottom-color: #0057a8;
+    font-weight: 700;
+}
+
+/* Book Ticket — highlighted pill */
+.nav-link.nav-highlight {
+    background: #e63946;
+    color: #fff;
+    margin: 6px 8px;
+    padding: 5px 14px;
+    border-radius: 5px;
+    border-bottom: 3px solid transparent;
+    font-weight: 700;
+    align-self: center;
+    transition: background 0.18s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(200, 20, 40, 0.22);
+}
+
+.nav-link.nav-highlight:hover {
+    background: #c1121f;
+    border-bottom-color: transparent;
+    box-shadow: 0 4px 12px rgba(200, 20, 40, 0.32);
+}
+
+/* ═══════════════════════════════════════════════════════
+   RIGHT COLUMN — Auth Panel
+   ═══════════════════════════════════════════════════════ */
+.header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 24px 0 0;
+    background: #fff;
+}
+
+/* ── Auth panel wrapper (guest state) ── */
+.auth-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px 14px 20px;
+    height: 100%;
+    background: #fff;
+    position: relative;
+}
+
+/* "My Account" label */
+.auth-panel-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #9ab0c8;
+}
+
+/* Buttons container */
+.auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 118px;
+}
+
+/* ── Sign In — black block border, white fill ── */
+.main-header .btn-signin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 9px 16px;
+    background: #fff !important;
+    color: #222 !important;
+    border: 2px solid #222 !important;
+    border-radius: 0 !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    transition: background 0.15s, color 0.15s !important;
+}
+
+.main-header .btn-signin:hover {
+    background: #222 !important;
+    color: #fff !important;
+}
+
+/* ── Sign Up — black block fill ── */
+.main-header .btn-signup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 9px 16px;
+    background: #222 !important;
+    color: #fff !important;
+    border: 2px solid #222 !important;
+    border-radius: 0 !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    transition: background 0.15s !important;
+}
+
+.main-header .btn-signup:hover {
+    background: #000 !important;
+    border-color: #000 !important;
+}
+
+/* SVG icon in auth buttons */
+.auth-btn-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+
+
+/* ── User section (logged in) — name only + hover dropdown ── */
+.user-section {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Name trigger */
+.user-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #111;
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 2px solid transparent;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+}
+
+.user-section:hover .user-name {
+    border-color: #222;
+    background: #f5f5f5;
+}
+
+/* Chevron rotates on open */
+.user-chevron {
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.user-section:hover .user-chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 2px);
+    right: 0;
+    min-width: 130px;
+    background: #fff;
+    border: 2px solid #222;
+    box-shadow: 4px 4px 0 #ddd;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    z-index: 200;
+}
+
+.user-section:hover .user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Logout inside dropdown */
+.main-header .logout-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    background: #fff !important;
+    border: none !important;
+    color: #222 !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    padding: 10px 14px !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.3px !important;
+    transition: background 0.12s, color 0.12s !important;
+    border-radius: 0 !important;
+    text-align: left !important;
+}
+
+.main-header .logout-btn:hover {
+    background: #222 !important;
+    color: #fff !important;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1180px) {
+    .header-body {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .header-left {
+        padding: 12px 16px 0 18px;
+        gap: 10px;
+    }
+
+    .middle-top-row {
+        gap: 10px;
+        padding: 8px 14px;
+    }
+
+    .feedback-btn {
+        font-size: 0.75rem;
+        padding: 7px 12px;
+    }
+
+    .nav-link {
+        padding: 0 12px;
+        font-size: 0.8rem;
+    }
+
+    .search-box {
+        min-width: 160px;
+        max-width: 220px;
+    }
+
+    .header-right {
+        padding: 10px 14px;
+    }
+
+    .auth-buttons,
+    .user-section {
+        min-width: 95px;
+    }
+
+    .btn-signin,
+    .btn-signup {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 960px) {
+    .helpline-box {
+        display: none;
+    }
+
+    .search-box {
+        min-width: 140px;
+        max-width: 190px;
+    }
+
+    .logo-tagline {
+        display: none;
+    }
+}
+
+@media (max-width: 780px) {
+    .header-body {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .header-left {
+        grid-row: 1;
+        grid-column: 1;
+    }
+
+    .header-middle {
+        grid-row: 1 / span 2;
+        grid-column: 2;
+    }
+
+    .header-right {
+        display: none;
+        /* moves into mobile menu */
+    }
+
+    .feedback-btn {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 6px 16px;
+    }
+
+    .header-left {
+        padding: 10px 14px;
+    }
+
+    .kmr-logo-img {
+        height: 44px;
+    }
+
+    .logo-title {
+        font-size: 0.95rem;
+    }
+
+    .logo-subtitle {
+        display: none;
+    }
+
+    .middle-top-row {
+        justify-content: flex-start;
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .search-box {
+        min-width: 100%;
+        max-width: 100%;
+        flex: unset;
+        width: 100%;
+    }
+
+    .nav-link {
+        padding: 0 10px;
+        font-size: 0.76rem;
+    }
+}

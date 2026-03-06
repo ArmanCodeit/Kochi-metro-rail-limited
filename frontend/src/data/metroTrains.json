@@ -1,0 +1,14 @@
+[
+  {
+    "id": "MT1",
+    "name": "Metro Express 1",
+    "route": ["Aluva","Pulinchodu","Companypady","SN Junction","Ambattukavu","Palarivattom","Edapally","M.G. Road"],
+    "upcoming": [{"departure":"10:05"},{"departure":"10:20"}]
+  },
+  {
+    "id": "MT2",
+    "name": "Metro Local 2",
+    "route": ["M.G. Road","Lissie","Kaloor","Muttom","Edapally","Palarivattom","Kakkanad"],
+    "upcoming": [{"departure":"10:12"},{"departure":"10:30"}]
+  }
+]
