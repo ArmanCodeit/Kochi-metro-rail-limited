@@ -19,6 +19,8 @@ import FAQs from './pages/FAQs';
 import Footer from './components/Layout/Footer';
 
 // Inner app that has access to router hooks
+// Inner app that has access to router hooks
+
 function AppInner() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
