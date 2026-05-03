@@ -14,6 +14,3 @@ const TrainSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Train', TrainSchema);
-
-
-
