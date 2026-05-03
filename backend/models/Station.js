@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const StationSchema = new mongoose.Schema({
     stationId: {
         type: String,
