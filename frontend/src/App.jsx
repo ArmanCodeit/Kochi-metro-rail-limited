@@ -9,6 +9,7 @@ import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
 import FindMetro from './pages/FindMetro';
 import TicketView from './pages/TicketView';
+import TicketVerificationView from './pages/TicketVerificationView';
 import Chatbot from './components/Chatbot/Chatbot';
 import Recharge from './pages/Recharge';
 import MyAccount from './pages/MyAccount';
@@ -16,6 +17,8 @@ import StationMasterDashboard from './pages/StationMasterDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import HelpAndContact from './pages/HelpAndContact';
 import FAQs from './pages/FAQs';
+import Facilities from './pages/Facilities';
+import UserGuide from './pages/UserGuide';
 import Footer from './components/Layout/Footer';
 
 // Inner app that has access to router hooks .
@@ -69,6 +72,8 @@ function AppInner() {
             myaccount: '/myaccount',
             help: '/help',
             faq: '/faq',
+            facilities: '/facilities',
+            userguide: '/user-guide',
         };
         navigate(routes[page] || '/');
     };
@@ -96,12 +101,16 @@ function AppInner() {
             <main className={!isAuthPage ? 'app-main' : ''}>
                 <Routes>
                     <Route path="/" element={<HomePage onNavigate={onNavigate} />} />
+                    <Route path="/facilities" element={<Facilities onNavigate={onNavigate} />} />
                     <Route path="/signup" element={<SignUp onNavigate={onNavigate} />} />
                     <Route path="/signin" element={<SignIn onNavigate={onNavigate} onLogin={handleLogin} />} />
                     <Route path="/dashboard" element={<Dashboard user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/findmetro" element={<FindMetro user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/ticket" element={<TicketView onNavigate={onNavigate} />} />
-                    <Route path="/recharge" element={<Recharge onNavigate={onNavigate} />} />
+                    <Route path="/verify-ticket/:ticketId" element={<TicketVerificationView onNavigate={onNavigate} />} />
+                    <Route path="/verify-ticket" element={<TicketVerificationView onNavigate={onNavigate} />} />
+                    <Route path="/recharge" element={<Recharge user={user} onNavigate={onNavigate} />} />
+                    <Route path="/user-guide" element={<UserGuide onNavigate={onNavigate} />} />
                     <Route path="/myaccount" element={<MyAccount user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/station-master" element={<StationMasterDashboard user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/officer-dashboard" element={<OfficerDashboard user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />

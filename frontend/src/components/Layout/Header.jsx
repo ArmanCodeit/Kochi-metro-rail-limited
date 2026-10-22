@@ -6,7 +6,7 @@ import EmergencyImg from "../../assets/emergency.png";
 const NAV_ITEMS = [
     { label: "Home", page: "home" },
     { label: "Recharge", page: "recharge" },
-    { label: "Facilities", page: null },
+    { label: "Facilities", page: "facilities" },
     { label: "Plan Your Trip", page: "findmetro" },
     { label: "Help & Contact", page: "help" },
     { label: "Book Ticket", page: "findmetro", highlight: true },
@@ -116,23 +116,25 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                             title="24 Hour Emergency Helpline: 1800-425-8022"
                         />
 
-                        <div className="search-box">
-                            <input
-                                type="text"
-                                placeholder="Search…"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                aria-label="Search"
-                            />
-                            <button aria-label="Submit search" className="search-icon-btn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="#111" strokeWidth="2.5"
-                                    strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="11" cy="11" r="8" />
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                </svg>
-                            </button>
-                        </div>
+                        {currentPage !== 'home' && (
+                            <div className="search-box">
+                                <input
+                                    type="text"
+                                    placeholder="Search…"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    aria-label="Search"
+                                />
+                                <button aria-label="Submit search" className="search-icon-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="#111" strokeWidth="2.5"
+                                        strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Row 2: Navigation links */}
@@ -145,11 +147,13 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                                     item.highlight ? "nav-highlight" : "",
                                     currentPage === item.page && item.page ? "active" : "",
                                 ].filter(Boolean).join(" ")}
-                                onClick={() =>
-                                    item.page
-                                        ? nav(item.page)
-                                        : alert(`${item.label} — coming soon`)
-                                }
+                                onClick={() => {
+                                    if (item.page) {
+                                        nav(item.page);
+                                    } else {
+                                        alert(`${item.label} — coming soon`);
+                                    }
+                                }}
                             >
                                 {item.label}
                             </a>

@@ -337,7 +337,6 @@ const MyAccount = ({ user, onLogout, onNavigate }) => {
                                         <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </div>
-                                <button className="upload-pic-btn">Upload Picture</button>
                             </div>
 
                             <div className="form-section">

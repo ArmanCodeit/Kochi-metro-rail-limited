@@ -1,0 +1,469 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   KOCHI METRO RAIL LIMITED — DEDICATED FACILITIES PAGE STYLESHEET
+   Authentic Design System: Kochi Metro Blue (#0057a8), KMRL Cyan (#059db2),
+   Eco Green (#00a859), Urbanist/Inter Typography, and responsive card grid.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800&display=swap');
+
+.facilities-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Urbanist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1e293b;
+    padding-bottom: 5rem;
+}
+
+.facilities-page *,
+.facilities-page *::before,
+.facilities-page *::after {
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────
+   HERO HEADER
+   ───────────────────────────────────────────── */
+.facilities-page .facilities-hero-wrapper {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 35px 40px;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+    border-bottom: 1px solid #e2e8f0;
+    min-height: 190px;
+    overflow: hidden;
+}
+
+.facilities-page .facilities-hero-img-left {
+    height: 110px;
+    object-fit: contain;
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.facilities-page .facilities-hero-img-right {
+    height: 110px;
+    object-fit: contain;
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.facilities-page .facilities-hero-center {
+    flex: 1;
+    text-align: center;
+    z-index: 2;
+    padding: 0 260px;
+}
+
+.facilities-page .facilities-pretitle {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #059db2;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.facilities-page .facilities-hero-center h1 {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px;
+    letter-spacing: -0.5px;
+}
+
+.facilities-page .facilities-hero-center p {
+    font-size: 1rem;
+    color: #475569;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.55;
+    font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────
+   MAIN DIRECTORY CONTAINER
+   ───────────────────────────────────────────── */
+.facilities-page .facilities-main-container {
+    max-width: 1260px;
+    margin: 2.5rem auto 0;
+    padding: 0 24px;
+}
+
+/* Control Bar (Search + Categories) */
+.facilities-page .facilities-control-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: #ffffff;
+    padding: 1.5rem 1.8rem;
+    border-radius: 16px;
+    border: 1px solid #eaeff5;
+    box-shadow: 0 4px 20px rgba(0, 60, 130, 0.05);
+    margin-bottom: 1.75rem;
+}
+
+.facilities-page .facilities-search-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0 16px;
+    height: 48px;
+    transition: all 0.2s ease;
+}
+
+.facilities-page .facilities-search-box:focus-within {
+    border-color: #059db2;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.15);
+}
+
+.facilities-page .facilities-search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #1e293b;
+    outline: none;
+}
+
+.facilities-page .facilities-search-box input::placeholder {
+    color: #94a3b8;
+}
+
+.facilities-page .facilities-clear-search {
+    background: #e2e8f0;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: #475569;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.facilities-page .facilities-clear-search:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+/* Category Filter Tabs */
+.facilities-page .facilities-category-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.facilities-page .facilities-tab-pill {
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.facilities-page .facilities-tab-pill:hover {
+    border-color: #059db2;
+    color: #059db2;
+    background: #f0fdfa;
+}
+
+.facilities-page .facilities-tab-pill.is-active {
+    background: #059db2;
+    color: #ffffff;
+    border-color: #059db2;
+    box-shadow: 0 4px 12px rgba(5, 157, 178, 0.28);
+}
+
+/* Directory Meta */
+.facilities-page .facilities-directory-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 4px;
+    font-size: 0.88rem;
+    color: #64748b;
+}
+
+.facilities-page .facilities-directory-meta strong {
+    color: #0f172a;
+}
+
+.facilities-page .search-active-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+/* ─────────────────────────────────────────────
+   CARDS GRID
+   ───────────────────────────────────────────── */
+.facilities-page .facilities-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.facilities-page .facility-item-card {
+    background: #ffffff;
+    border: 1px solid #eaeff5;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 4px 18px rgba(0, 60, 130, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.facilities-page .facility-item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0, 60, 130, 0.1);
+    border-color: #cbd5e1;
+}
+
+.facilities-page .facility-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.facilities-page .facility-icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #e0f7fa;
+    color: #008197;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #b2ebf2;
+}
+
+.facilities-page .facility-badge-pill {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.facilities-page .facility-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px;
+    line-height: 1.3;
+}
+
+.facilities-page .facility-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.55;
+    margin: 0 0 20px;
+    font-weight: 500;
+}
+
+.facilities-page .facility-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #059db2;
+}
+
+/* Empty State */
+.facilities-page .facilities-empty-state {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px dashed #cbd5e1;
+    padding: 4rem 2rem;
+    text-align: center;
+    max-width: 540px;
+    margin: 2rem auto;
+}
+
+.facilities-page .facilities-empty-state h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.3rem;
+    color: #1e293b;
+}
+
+.facilities-page .facilities-empty-state p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.facilities-page .facilities-reset-btn {
+    background: #059db2;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.facilities-page .facilities-reset-btn:hover {
+    background: #048799;
+}
+
+/* ─────────────────────────────────────────────
+   SUPPORT ASSISTANCE BANNER
+   ───────────────────────────────────────────── */
+.facilities-page .facilities-support-banner {
+    margin-top: 3.5rem;
+    background: linear-gradient(135deg, #003744 0%, #065a6f 40%, #008197 75%, #059db2 100%);
+    border-radius: 18px;
+    padding: 28px 32px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 10px 30px -5px rgba(5, 157, 178, 0.3);
+}
+
+.facilities-page .support-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.facilities-page .support-icon-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #38bdf8;
+}
+
+.facilities-page .support-banner-content h4 {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.facilities-page .support-banner-content p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.45;
+}
+
+.facilities-page .support-banner-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.facilities-page .support-helpline-tag {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 0.5px;
+}
+
+.facilities-page .support-contact-btn {
+    background: #ffffff;
+    color: #003744;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.facilities-page .support-contact-btn:hover {
+    background: #e0f2fe;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE BREAKPOINTS
+   ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .facilities-page .facilities-hero-center {
+        padding: 0 140px;
+    }
+
+    .facilities-page .facilities-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .facilities-page .facilities-support-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .facilities-page .support-banner-actions {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .facilities-page .facilities-hero-img-left,
+    .facilities-page .facilities-hero-img-right {
+        display: none;
+    }
+
+    .facilities-page .facilities-hero-center {
+        padding: 0;
+    }
+
+    .facilities-page .facilities-hero-center h1 {
+        font-size: 1.8rem;
+    }
+
+    .facilities-page .facilities-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}

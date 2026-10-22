@@ -1,308 +1,770 @@
-body,
-html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Caudex', serif;
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   KOCHI METRO RAIL LIMITED — SIGN UP STYLESHEET
+   Authentic Design System: Kochi Metro Blue (#0057a8), KMRL Cyan/Teal (#059db2),
+   Eco Green (#00a859), Clean Card UI & Inter/Urbanist Typography.
+   ───────────────────────────────────────────────────────────────────────────── */
 
-.signup-container {
-    height: 100vh;
-    display: flex;
-    background: #ffffff;
-    align-items: stretch;
-    overflow: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800&display=swap');
 
-/* ── Media Side (Left) ── */
-.signup-media-side {
-    flex: 1;
-    position: relative;
-    display: none;
-    /* hidden on small screens */
-}
-
-@media (min-width: 900px) {
-    .signup-media-side {
-        display: block;
-    }
-}
-
-.signup-media-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(192, 244, 251, 0.4) 0%, rgba(185, 132, 250, 0.3) 100%);
-    z-index: 2;
-}
-
-.signup-image-bg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-/* ── Form Side (Right) ── */
-.signup-form-side {
-    flex: 1;
-    display: flex;
-    background: #ffffff;
-    padding: 2rem;
-    overflow-y: auto;
-    height: 100vh;
-}
-
-.signup-form-wrapper {
-    max-width: 480px;
-    width: 100%;
-    margin: auto;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-
-.signup-header {
-    margin-bottom: 2.5rem;
-}
-
-.signup-header h1 {
-    color: #630c5e;
-    /* Deep purple matching image logic */
-    font-size: 3.2rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: 700;
-}
-
-.signup-header p {
-    color: #666;
-    margin: 0;
-    font-size: 1.1rem;
-    font-family: 'Urbanist', sans-serif;
-}
-
-/* ── Form Inputs ── */
-.signup-form {
+.signup-page {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-
-.form-group label {
-    font-weight: 500;
-    color: #718096;
-    font-size: 0.95rem;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
-    width: 100%;
-    padding: 1.1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    color: #2d3748;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
     box-sizing: border-box;
 }
 
-.form-group input:focus {
-    outline: none;
+.signup-page *,
+.signup-page *::before,
+.signup-page *::after {
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────
+   TOP BRAND BAR
+   ───────────────────────────────────────────── */
+.signup-page .auth-top-bar {
     background: #ffffff;
-    border-color: #b984fa;
-    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+    border-bottom: 1px solid #eaeff5;
+    box-shadow: 0 2px 10px rgba(0, 60, 130, 0.05);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
-.form-group input.input-error {
-    border-color: #dc3545;
+.signup-page .auth-top-bar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* ── Password Toggle ── */
-.password-input-wrapper {
+.signup-page .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.signup-page .auth-brand:hover {
+    opacity: 0.92;
+}
+
+.signup-page .auth-kmrl-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 5px rgba(0, 87, 168, 0.15));
+}
+
+.signup-page .auth-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.signup-page .auth-brand-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #0057a8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.signup-page .auth-brand-subtitle {
+    font-size: 0.76rem;
+    color: #5a7a9a;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.signup-page .auth-brand-tagline {
+    font-size: 0.65rem;
+    color: #00a859;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+.signup-page .auth-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.signup-page .auth-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.signup-page .auth-back-btn:hover {
+    background: #e2e8f0;
+    color: #0057a8;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────────
+   MAIN AUTHENTICATION CONTAINER
+   ───────────────────────────────────────────── */
+.signup-page .auth-main-container {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+}
+
+.signup-page .auth-card-shell.signup-card-shell {
+    display: grid;
+    grid-template-columns: 1.05fr 1.15fr;
+    max-width: 1100px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 45px -10px rgba(0, 60, 130, 0.12), 0 4px 15px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────
+   LEFT PANEL — KMRL TRANSIT SHOWCASE
+   ───────────────────────────────────────────── */
+.signup-page .auth-showcase-side {
+    position: relative;
+    background: linear-gradient(145deg, #003744 0%, #065a6f 40%, #008197 75%, #059db2 100%);
+    color: #ffffff;
+    padding: 3.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.signup-page .showcase-watermark-ring {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.signup-page .showcase-watermark-ring.secondary {
+    top: auto;
+    bottom: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 75%);
+}
+
+.signup-page .showcase-top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #e0f2fe;
+    align-self: flex-start;
+    position: relative;
+    z-index: 2;
+}
+
+.signup-page .showcase-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+}
+
+.signup-page .showcase-hero {
+    margin: 1.5rem 0 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.signup-page .showcase-title {
+    font-family: 'Urbanist', 'Inter', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.5px;
+}
+
+.signup-page .showcase-subtitle {
+    font-size: 0.94rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+}
+
+.signup-page .showcase-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.signup-page .showcase-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.signup-page .feature-icon-bubble {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #e0f2fe;
+}
+
+.signup-page .feature-text h4 {
+    margin: 0 0 3px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.signup-page .feature-text p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.signup-page .showcase-footer {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.82);
+    position: relative;
+    z-index: 2;
+}
+
+.signup-page .showcase-footer strong {
+    color: #38bdf8;
+    letter-spacing: 0.5px;
+}
+
+/* ─────────────────────────────────────────────
+   RIGHT PANEL — REGISTRATION FORM
+   ───────────────────────────────────────────── */
+.signup-page .auth-form-side {
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 3rem;
+}
+
+.signup-page .auth-form-wrapper {
+    width: 100%;
+    max-width: 460px;
+}
+
+.signup-page .auth-form-header {
+    margin-bottom: 2rem;
+}
+
+.signup-page .auth-pill-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #059db2;
+    background: #e0f7fa;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.signup-page .auth-form-header h1 {
+    font-family: 'Urbanist', 'Inter', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.5px;
+}
+
+.signup-page .auth-form-header p {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Alert error */
+.signup-page .form-alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Groups */
+.signup-page .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.signup-page .form-group label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.signup-page .req-star {
+    color: #e63946;
+    font-weight: 700;
+}
+
+.signup-page .form-group input[type="text"],
+.signup-page .form-group input[type="email"],
+.signup-page .form-group input[type="password"] {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.signup-page .form-group input::placeholder {
+    color: #94a3b8;
+    font-size: 0.88rem;
+}
+
+.signup-page .form-group input:focus {
+    background: #ffffff;
+    border-color: #059db2;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.18);
+}
+
+.signup-page .form-group input.input-error {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.signup-page .field-error-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #dc2626;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+/* Custom Select Dropdown */
+.signup-page .select-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.toggle-password {
-    position: absolute;
-    right: 15px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #a0aec0;
-}
-
-
-/* ── Messages & Links ── */
-.error-text {
-    color: #e53e3e;
-    font-size: 0.85rem;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.error-message {
-    background: #fff5f5;
-    color: #c53030;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #feb2b2;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.strength-indicator {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 8px;
-    text-align: center;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.strength-indicator.strength-weak {
-    background: #ffe0e0;
-    color: #dc3545;
-}
-
-.strength-indicator.strength-fair {
-    background: #fff3cd;
-    color: #ff9800;
-}
-
-.strength-indicator.strength-good {
-    background: #d4edda;
-    color: #28a745;
-}
-
-.strength-indicator.strength-strong {
-    background: #d1ecf1;
-    color: #0066b3;
-}
-
-.password-requirements {
-    background: #f8f9fa;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-top: 0.5rem;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.password-requirements p {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #333;
-}
-
-.password-requirements ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.password-requirements li {
-    font-size: 0.8rem;
-    color: #999;
-    margin: 0.3rem 0;
-}
-
-.password-requirements li.valid {
-    color: #28a745;
-}
-
-/* User Type Selection Styles */
-.form-select {
-    padding: 1.1rem;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.signup-page .auth-select {
     width: 100%;
-    color: #2d3748;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.form-select:hover {
-    border-color: #b984fa;
-}
-
-.form-select:focus {
+    height: 46px;
+    padding: 0 42px 0 14px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: #1e293b;
     outline: none;
-    border-color: #b984fa;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s ease;
+}
+
+.signup-page .auth-select:focus {
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+    border-color: #059db2;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.18);
 }
 
-.form-group.checkbox {
-    flex-direction: row;
+.signup-page .select-chevron-icon {
+    position: absolute;
+    right: 14px;
+    pointer-events: none;
+    color: #64748b;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-family: 'Urbanist', sans-serif;
 }
 
-.form-group.checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-.form-group.checkbox label {
-    margin: 0;
-    cursor: pointer;
-}
-
-/* ── Submit Button ── */
-.btn-create-account {
-    padding: 1.1rem;
-    background: #630c5e;
-    /* Matching the deep purple button */
-    color: white;
-    border: none;
+/* Conditional Staff Credentials Box */
+.signup-page .staff-fields-box {
+    background: #f0fdfa;
+    border: 1.5px solid #99f6e4;
     border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    padding: 1.25rem 1.25rem 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.signup-page .staff-fields-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #0f766e;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+/* Password input wrapper */
+.signup-page .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.signup-page .password-input-wrapper input {
+    padding-right: 46px !important;
+}
+
+.signup-page .toggle-password-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #64748b;
     cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 5px;
-    font-family: 'Urbanist', sans-serif;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
-.btn-create-account:hover {
-    background: #4a0746;
+.signup-page .toggle-password-btn:hover {
+    color: #059db2;
+    background: #f1f5f9;
 }
 
-.btn-create-account:active {
+/* Password Strength Meter */
+.signup-page .strength-meter-wrap {
+    margin-top: 8px;
+}
+
+.signup-page .strength-meter-track {
+    width: 100%;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.signup-page .strength-meter-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.signup-page .strength-meter-bar.strength-weak {
+    width: 25%;
+    background-color: #ef4444;
+}
+
+.signup-page .strength-meter-bar.strength-fair {
+    width: 50%;
+    background-color: #f59e0b;
+}
+
+.signup-page .strength-meter-bar.strength-good {
+    width: 75%;
+    background-color: #059db2;
+}
+
+.signup-page .strength-meter-bar.strength-strong {
+    width: 100%;
+    background-color: #00a859;
+}
+
+.signup-page .strength-meter-caption {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.signup-page .strength-txt-weak { color: #ef4444; }
+.signup-page .strength-txt-fair { color: #f59e0b; }
+.signup-page .strength-txt-good { color: #059db2; }
+.signup-page .strength-txt-strong { color: #00a859; }
+
+/* Password Rules Checklist */
+.signup-page .password-rules-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.signup-page .rules-heading {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.signup-page .rules-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.signup-page .rule-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
+
+.signup-page .rule-pill.satisfied {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.signup-page .rule-pill.satisfied svg {
+    color: #059669;
+}
+
+/* Remember Checkbox */
+.signup-page .remember-checkbox-row {
+    margin: 1.25rem 0 1.5rem;
+}
+
+.signup-page .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #475569;
+    cursor: pointer;
+}
+
+.signup-page .checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #059db2;
+    cursor: pointer;
+}
+
+/* Primary Submit Button */
+.signup-page .auth-primary-btn {
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(135deg, #059db2 0%, #008197 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(5, 157, 178, 0.32);
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+.signup-page .auth-primary-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #048799 0%, #006f82 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(5, 157, 178, 0.42);
+}
+
+.signup-page .auth-primary-btn:active:not(:disabled) {
     transform: translateY(0);
 }
 
-/* ── Bottom Link ── */
-.signin-link {
+.signup-page .auth-primary-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.signup-page .btn-spinner-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.signup-page .auth-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: authSpin 0.7s linear infinite;
+}
+
+@keyframes authSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Switch Page Prompt */
+.signup-page .auth-switch-prompt {
+    margin-top: 1.75rem;
     text-align: center;
-    color: #718096;
-    font-size: 0.95rem;
-    font-family: 'Urbanist', sans-serif;
-    margin-top: 10px;
+    font-size: 0.88rem;
+    color: #475569;
 }
 
-.signin-link a {
-    color: #630c5e;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
+.signup-page .switch-page-link {
+    background: none;
+    border: none;
+    color: #059db2;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s ease;
 }
 
-.signin-link a:hover {
+.signup-page .switch-page-link:hover {
+    color: #0057a8;
     text-decoration: underline;
+}
+
+/* ─────────────────────────────────────────────
+   BOTTOM FOOTER
+   ───────────────────────────────────────────── */
+.signup-page .auth-bottom-footer {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    border-top: 1px solid #eaeff5;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.signup-page .auth-bottom-footer p {
+    margin: 0;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE MEDIA QUERIES
+   ───────────────────────────────────────────── */
+@media (max-width: 950px) {
+    .signup-page .auth-card-shell.signup-card-shell {
+        grid-template-columns: 1fr;
+        max-width: 540px;
+    }
+
+    .signup-page .auth-showcase-side {
+        padding: 2.25rem 2rem;
+    }
+
+    .signup-page .showcase-title {
+        font-size: 1.7rem;
+    }
+
+    .signup-page .showcase-features-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .signup-page .auth-form-side {
+        padding: 2.5rem 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .signup-page .auth-top-bar-inner {
+        padding: 8px 16px;
+    }
+
+    .signup-page .auth-kmrl-logo {
+        height: 42px;
+    }
+
+    .signup-page .auth-brand-title {
+        font-size: 1rem;
+    }
+
+    .signup-page .auth-main-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .signup-page .auth-showcase-side {
+        display: none; /* Focus directly on the form for smooth mobile onboarding */
+    }
+
+    .signup-page .auth-form-side {
+        padding: 2rem 1.5rem;
+    }
 }

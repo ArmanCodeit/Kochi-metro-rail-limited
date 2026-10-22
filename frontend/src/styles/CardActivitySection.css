@@ -1,0 +1,318 @@
+/* ── CARD ACTIVITY SECTION (JOURNEY SIMULATOR & TRANSACTION LEDGER) ── */
+
+.card-activity-container {
+    max-width: 1200px;
+    margin: -2rem auto 4rem auto;
+    padding: 0 5%;
+    position: relative;
+    z-index: 10;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.activity-card-panel {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    padding: 1.8rem;
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.4rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.9rem;
+}
+
+.panel-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+/* ── JOURNEY SIMULATOR STYLES ── */
+.simulator-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.station-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.station-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1e293b;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.station-select:focus {
+    outline: none;
+    border-color: #059db2;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.15);
+}
+
+.journey-route-preview {
+    background: #f0fdfa;
+    border: 1px dashed #5eead4;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-detail-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-detail-title {
+    font-size: 0.7rem;
+    color: #0f766e;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.preview-detail-val {
+    font-size: 1.15rem;
+    color: #134e4a;
+    font-weight: 800;
+}
+
+.preview-fare-val {
+    font-size: 1.35rem;
+    color: #059db2;
+    font-weight: 900;
+}
+
+.btn-tap-ride {
+    background: linear-gradient(135deg, #059db2 0%, #0d9488 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.9rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(5, 157, 178, 0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-tap-ride:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 157, 178, 0.4);
+}
+
+.btn-tap-ride:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.simulation-disclaimer {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    line-height: 1.4;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* ── TRANSACTION LEDGER STYLES ── */
+.txn-filter-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.txn-filter-btn {
+    background: #f1f5f9;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.txn-filter-btn.active {
+    background: #059db2;
+    color: #ffffff;
+}
+
+.txn-list-scroll {
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.txn-item-row {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.txn-item-row:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.txn-left-side {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.txn-type-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.txn-type-icon.recharge {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.txn-type-icon.fare_deduction {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.txn-info-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.txn-description {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.txn-meta {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.txn-right-side {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.txn-amount {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.txn-amount.credit {
+    color: #059669;
+}
+
+.txn-amount.debit {
+    color: #2563eb;
+}
+
+.txn-status-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-top: 3px;
+    text-transform: uppercase;
+}
+
+.txn-status-badge.success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.txn-status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.txn-status-badge.failed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.txn-empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #94a3b8;
+}
+
+.txn-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .activity-grid {
+        grid-template-columns: 1fr;
+    }
+    .card-activity-container {
+        margin-top: 1rem;
+    }
+}

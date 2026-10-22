@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import VideoBackground from '../components/VideoBackground';
 import fareStationsData from '../data/fareStations.json';
 import liveTrainsData from '../data/liveTrains.json';
 import MapMetro from '../components/Metro/MapMetro';
+import { getAllStations, METRO_LINES } from '../data/metroNetworkData';
 
 function HomePage({ onNavigate }) {
     const [metroLines, setMetroLines] = useState([]);
@@ -30,11 +31,15 @@ function HomePage({ onNavigate }) {
     const [showFareModal, setShowFareModal] = useState(false);
     const [fareModalFrom, setFareModalFrom] = useState('');
     const [fareModalTo, setFareModalTo] = useState('');
+    const [selectedFromStation, setSelectedFromStation] = useState(null);
+    const [selectedToStation, setSelectedToStation] = useState(null);
     const [fareModalFromSuggestions, setFareModalFromSuggestions] = useState([]);
     const [fareModalToSuggestions, setFareModalToSuggestions] = useState([]);
     const [showFareFromDropdown, setShowFareFromDropdown] = useState(false);
     const [showFareToDropdown, setShowFareToDropdown] = useState(false);
-    const [fareResult, setFareResult] = useState({ fare: 0, distance: 0, calculated: false });
+    const [fareLoading, setFareLoading] = useState(false);
+    const [fareError, setFareError] = useState(null);
+    const [fareResult, setFareResult] = useState({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
     const fareFromRef = useRef(null);
     const fareToRef = useRef(null);
 
@@ -102,38 +107,81 @@ function HomePage({ onNavigate }) {
         setCalculatedFare(fare);
     };
 
-    const calculateFareByStations = () => {
-        if (!fareModalFrom || !fareModalTo) return;
-        const fromIdx = allStations.findIndex(s => s.name === fareModalFrom);
-        const toIdx = allStations.findIndex(s => s.name === fareModalTo);
-        if (fromIdx === -1 || toIdx === -1) return;
+    const calculateFareByStations = async () => {
+        setFareError(null);
 
-        const hops = Math.abs(toIdx - fromIdx);
-        // Kochi Metro avg ~1.3 km per station
-        const distance = parseFloat((hops * 1.3).toFixed(1));
-        let fare;
-        if (distance <= 2) fare = 20;
-        else if (distance <= 6) fare = 25;
-        else if (distance <= 10) fare = 30;
-        else if (distance <= 14) fare = 35;
-        else if (distance <= 18) fare = 40;
-        else fare = 50;
-        setFareResult({ fare, distance, calculated: true });
+        // Resolve departure and destination station names
+        const fromName = selectedFromStation?.name || (fareModalFrom.includes(' — ') ? fareModalFrom.split(' — ')[0].trim() : fareModalFrom.trim());
+        const toName = selectedToStation?.name || (fareModalTo.includes(' — ') ? fareModalTo.split(' — ')[0].trim() : fareModalTo.trim());
+
+        // 1. Validation: both stations must be selected
+        if (!fromName || !toName) {
+            setFareError('Please select both departure and arrival stations.');
+            return;
+        }
+
+        // 2. Validation: prevent departure and arrival being the same
+        if (fromName.toLowerCase() === toName.toLowerCase()) {
+            setFareError('Departure and arrival stations cannot be the same.');
+            return;
+        }
+
+        setFareLoading(true);
+
+        try {
+            const resp = await fetch('/api/metro/plan-routes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fromStation: fromName, toStation: toName })
+            });
+
+            const data = await resp.json();
+
+            if (resp.ok && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                setFareResult({
+                    fare: route.fare,
+                    distance: route.distance,
+                    estimatedMinutes: route.estimatedMinutes,
+                    totalStops: route.totalStops,
+                    interchanges: route.interchanges || [],
+                    lines: route.lines || [],
+                    routeName: route.name,
+                    calculated: true
+                });
+            } else {
+                setFareError(data.message || 'No connected metro routes found between these stations.');
+                setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+            }
+        } catch (err) {
+            console.error('Error calculating fare:', err);
+            setFareError('Unable to connect to fare calculation engine. Please try again.');
+            setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+        } finally {
+            setFareLoading(false);
+        }
     };
 
     const resetFareModal = () => {
         setFareModalFrom('');
         setFareModalTo('');
-        setFareResult({ fare: 0, distance: 0, calculated: false });
+        setSelectedFromStation(null);
+        setSelectedToStation(null);
+        setFareError(null);
+        setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
         setShowFareFromDropdown(false);
         setShowFareToDropdown(false);
     };
 
     const swapFareStations = () => {
-        const tmp = fareModalFrom;
+        const tmpText = fareModalFrom;
+        const tmpObj = selectedFromStation;
         setFareModalFrom(fareModalTo);
-        setFareModalTo(tmp);
-        setFareResult({ fare: 0, distance: 0, calculated: false });
+        setSelectedFromStation(selectedToStation);
+        setFareModalTo(tmpText);
+        setSelectedToStation(tmpObj);
+        setFareError(null);
+        setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
     };
 
     useEffect(() => {
@@ -158,14 +206,50 @@ function HomePage({ onNavigate }) {
 
     const fetchStations = async () => {
         try {
-            const response = await fetch('/api/metro/stations');
+            const response = await fetch('/api/metro/network');
             if (response.ok) {
                 const data = await response.json();
-                setAllStations(data);
+                if (data.stations && data.stations.length > 0) {
+                    const formatted = data.stations.map(st => {
+                        const lineLabel = (st.lines && st.lines.length > 0) ? st.lines.join(' / ') : 'Blue Line';
+                        return {
+                            ...st,
+                            lineLabel,
+                            fullLabel: `${st.name} — ${lineLabel}`
+                        };
+                    });
+                    setAllStations(formatted);
+                    return;
+                }
             }
         } catch (error) {
-            console.error('Error fetching stations:', error);
-            // fallback to local static stations
+            console.error('Error fetching network stations:', error);
+        }
+
+        // Resilient fallback using verified metroNetworkData
+        try {
+            const fallbackStations = getAllStations().map(st => {
+                const lineNames = (st.lineIds || []).map(lid => {
+                    const l = METRO_LINES.find(line => line.id === lid);
+                    return l ? l.name : lid;
+                });
+                const lineLabel = lineNames.length > 0 ? lineNames.join(' / ') : 'Blue Line';
+                return {
+                    id: st.id,
+                    name: st.name,
+                    code: st.code,
+                    lines: lineNames,
+                    lineColors: (st.lineIds || []).map(lid => {
+                        const l = METRO_LINES.find(line => line.id === lid);
+                        return l ? l.color : '#0284c7';
+                    }),
+                    isInterchange: st.isInterchange || false,
+                    lineLabel,
+                    fullLabel: `${st.name} — ${lineLabel}`
+                };
+            });
+            setAllStations(fallbackStations);
+        } catch {
             setAllStations(fareStationsData || []);
         }
     };
@@ -617,7 +701,17 @@ function HomePage({ onNavigate }) {
                                 </span>
                             </div>
                         </div>
-                        <div className="services-div2" style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', background: '#f6f7fa', padding: '1.5rem', color: '#166534' }}>
+                        <div
+                            className="services-div2"
+                            style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', background: '#f6f7fa', padding: '1.5rem', color: '#166534', cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.2s' }}
+                            onClick={() => {
+                                const el = document.getElementById('facilities-section');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 24px rgba(22,101,52,0.13)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+                            title="View all passenger facilities at Kochi Metro stations"
+                        >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
                                 <div className="service-icon-container" style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <img
@@ -676,7 +770,14 @@ function HomePage({ onNavigate }) {
                                 Interact with Map
                             </button>
                         </div>
-                        <div className="services-div6" style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', background: '#f6f7fa', padding: '1.5rem' }}>
+                        <div
+                            className="services-div6"
+                            style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', background: '#f6f7fa', padding: '1.5rem', cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.2s' }}
+                            onClick={() => onNavigate('findmetro')}
+                            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,102,179,0.13)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+                            title="Plan your journey across Kochi Metro stations"
+                        >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
                                 <div className="service-icon-container" style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <img src="/images/train-station-svgrepo-com.svg" alt="Station" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
@@ -1023,143 +1124,6 @@ function HomePage({ onNavigate }) {
                 </div>
             </section> */}
 
-            {/* New Banner Grid Section */}
-            <section style={{ padding: '4rem 5rem', background: '#fff' }}>
-                <div className="new-banner-parent">
-                    <div className="new-banner-div2" style={{ position: 'relative', overflow: 'hidden' }}>
-                        {/* footer1.png - left side */}
-                        <img
-                            src="/images/footer1.png"
-                            alt="Footer Banner Left"
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: 0,
-                                height: '50%',
-                                width: 'auto',
-                                objectFit: 'contain',
-                                objectPosition: 'left bottom',
-                                display: 'block'
-                            }}
-                        />
-                        {/* footer.png - right side */}
-                        <img
-                            src="/images/footer.png"
-                            alt="Footer Banner Right"
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                right: 0,
-                                height: '100%',
-                                width: 'auto',
-                                objectFit: 'contain',
-                                objectPosition: 'right center',
-                                display: 'block'
-                            }}
-                        />
-                        {/* Left-center text */}
-                        <div style={{
-                            position: 'relative',
-                            zIndex: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            justifyContent: 'center',
-                            textAlign: 'left',
-                            gap: '8px',
-                            padding: '0 2rem'
-                        }}>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '1rem',
-                                fontWeight: '500',
-                                color: '#334e68',
-                                lineHeight: '1.5',
-                                fontFamily: 'Urbanist, sans-serif'
-                            }}>
-                                Your Journey, Your Way
-                            </p>
-                            <h1 style={{
-                                margin: 0,
-                                fontSize: '2.5rem',
-                                fontWeight: '800',
-                                color: '#0f172a',
-                                lineHeight: '1.2',
-                                fontFamily: 'Urbanist, sans-serif'
-                            }}>
-                                Download the Kochi Metro <br />Mobile App Today!
-                            </h1>
-
-                            {/* App Store Buttons */}
-                            <div style={{
-                                marginTop: '24px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                flexWrap: 'wrap'
-                            }}>
-                                {/* Play Store */}
-                                <a
-                                    href="https://play.google.com/store/apps/details?id=com.metroconnect3.app"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '14px',
-                                        backgroundColor: '#000',
-                                        borderRadius: '10px',
-                                        height: '54px',
-                                        padding: '0 20px',
-                                        textDecoration: 'none',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                                        transition: 'box-shadow 0.2s'
-                                    }}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="29" height="31" viewBox="0 0 29 31" fill="none">
-                                        <path d="M15.3445 13.8594L19.5445 9.35938L3.24453 0.559375C3.14453 0.459375 2.94453 0.459375 2.64453 0.359375L15.3445 13.8594Z" fill="#00F076" />
-                                        <path d="M21.3445 20.3594L27.2445 17.1594C27.9445 16.7594 28.3445 16.1594 28.3445 15.3594C28.3445 14.5594 27.9445 13.8594 27.2445 13.5594L21.3445 10.3594L16.6445 15.3594L21.3445 20.3594Z" fill="#FFC900" />
-                                        <path d="M0.74375 1.25928C0.44375 1.55928 0.34375 1.95928 0.34375 2.35928V28.3593C0.34375 28.7593 0.44375 29.1593 0.74375 29.5593L13.9438 15.3593L0.74375 1.25928Z" fill="#00D6FF" />
-                                        <path d="M15.3445 16.8594L2.64453 30.3594C2.84453 30.3594 3.04453 30.2594 3.24453 30.1594L19.5445 21.3594L15.3445 16.8594Z" fill="#FF3A44" />
-                                    </svg>
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span style={{ color: '#fff', fontWeight: '400', fontSize: '0.8rem', lineHeight: '1.3', fontFamily: 'Urbanist, sans-serif' }}>Get it on</span>
-                                        <span style={{ color: '#fff', fontWeight: '800', fontSize: '1rem', textTransform: 'uppercase', lineHeight: '1.3', fontFamily: 'Urbanist, sans-serif' }}>Play Store</span>
-                                    </div>
-                                </a>
-
-                                {/* App Store */}
-                                <a
-                                    href="https://apps.apple.com/us/app/metroconnect3/id6723876321"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '14px',
-                                        backgroundColor: '#000',
-                                        borderRadius: '10px',
-                                        height: '54px',
-                                        padding: '0 20px',
-                                        textDecoration: 'none',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                                        transition: 'box-shadow 0.2s'
-                                    }}
-                                >
-                                    <svg style={{ fill: '#fff' }} xmlns="http://www.w3.org/2000/svg" width="27" height="33" viewBox="0 0 27 33" fill="none">
-                                        <path d="M22.0586 17.3604C22.1033 22.2031 26.2822 23.8146 26.3286 23.8351C25.8177 25.4514 25.0761 26.9845 24.1269 28.3863C22.8008 30.3357 21.4246 32.2779 19.2567 32.3182C17.1265 32.3576 16.4415 31.0476 14.006 31.0476C11.5705 31.0476 10.8102 32.278 8.79365 32.3577C6.70094 32.4375 5.10744 30.2499 3.7707 28.3076C1.03862 24.3347 -1.04928 17.0811 1.75419 12.1843C3.14655 9.75338 5.63548 8.21355 8.3369 8.17408C10.3918 8.1346 12.3313 9.56464 13.5877 9.56464C14.844 9.56464 17.2001 7.84494 19.678 8.09755C20.7153 8.14093 23.6272 8.51898 25.4969 11.2718C25.3462 11.3657 22.0226 13.3119 22.0586 17.3606V17.3604ZM18.0552 5.4696C19.1662 4.1169 19.9141 2.23389 19.7101 0.359863C18.1082 0.424656 16.1721 1.43325 15.0235 2.78515C13.9937 3.98202 13.0925 5.89852 13.3357 7.73503C15.1206 7.87394 16.9442 6.82264 18.0552 5.46914" />
-                                    </svg>
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span style={{ color: '#fff', fontWeight: '400', fontSize: '0.8rem', lineHeight: '1.3', fontFamily: 'Urbanist, sans-serif' }}>Download From</span>
-                                        <span style={{ color: '#fff', fontWeight: '800', fontSize: '1rem', textTransform: 'uppercase', lineHeight: '1.3', fontFamily: 'Urbanist, sans-serif' }}>App Store</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Fare Calculator Modal */}
             {showFareModal && (
                 <div
@@ -1176,8 +1140,8 @@ function HomePage({ onNavigate }) {
                                 Fare Calculator
                             </div>
                             <div className="fare-tab-inactive">
-                                <span className="fare-tab-desc">Select your station to calculate fare and view your journey details.</span>
-                                <button className="fare-close-icon" onClick={() => { setShowFareModal(false); resetFareModal(); }}>
+                                <span className="fare-tab-desc">Select departing and arriving stations to calculate verified metro fare and route details.</span>
+                                <button className="fare-close-icon" onClick={() => { setShowFareModal(false); resetFareModal(); }} aria-label="Close Fare Calculator">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a0aec0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="15" y1="9" x2="9" y2="15"></line>
@@ -1193,17 +1157,23 @@ function HomePage({ onNavigate }) {
                             <div className="fare-inputs-group">
                                 {/* From Input */}
                                 <div className="fare-input-row" ref={fareFromRef}>
-                                    <label>From</label>
+                                    <label>Departure Station</label>
                                     <input
                                         type="text"
-                                        placeholder="Search From Station"
+                                        placeholder="Search Departure Station (e.g. Aluva — Blue Line)"
                                         value={fareModalFrom}
                                         autoComplete="off"
                                         onChange={e => {
                                             const v = e.target.value;
                                             setFareModalFrom(v);
-                                            setFareResult({ fare: 0, distance: 0, calculated: false });
-                                            const filtered = v.trim() === '' ? allStations : allStations.filter(s => s.name.toLowerCase().includes(v.toLowerCase()));
+                                            setSelectedFromStation(null);
+                                            setFareError(null);
+                                            setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+                                            const filtered = v.trim() === '' ? allStations : allStations.filter(s =>
+                                                s.name.toLowerCase().includes(v.toLowerCase()) ||
+                                                (s.code || '').toLowerCase().includes(v.toLowerCase()) ||
+                                                (s.lineLabel || '').toLowerCase().includes(v.toLowerCase())
+                                            );
                                             setFareModalFromSuggestions(filtered);
                                             setShowFareFromDropdown(true);
                                         }}
@@ -1215,10 +1185,28 @@ function HomePage({ onNavigate }) {
                                     {showFareFromDropdown && fareModalFromSuggestions.length > 0 && (
                                         <div className="fare-dropdown">
                                             {fareModalFromSuggestions.map((s, i) => (
-                                                <div key={i} className="fare-dropdown-item"
-                                                    onMouseDown={e => { e.preventDefault(); setFareModalFrom(s.name); setShowFareFromDropdown(false); setFareResult({ fare: 0, distance: 0, calculated: false }); }}
+                                                <div
+                                                    key={s.id || i}
+                                                    className="fare-dropdown-item"
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setFareModalFrom(s.fullLabel || `${s.name} — ${s.lineLabel || 'Blue Line'}`);
+                                                        setSelectedFromStation(s);
+                                                        setShowFareFromDropdown(false);
+                                                        setFareError(null);
+                                                        setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+                                                    }}
                                                 >
-                                                    <span className="fare-dropdown-name">{s.name}</span>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
+                                                        <span className="fare-dropdown-name">
+                                                            {s.name} <span style={{ color: s.lineColors?.[0] || '#0284c7', fontSize: '0.82rem', fontWeight: '600' }}>— {s.lineLabel || 'Blue Line'}</span>
+                                                        </span>
+                                                        {s.isInterchange && (
+                                                            <span style={{ fontSize: '0.72rem', color: '#8b5cf6', fontWeight: '700' }}>
+                                                                ⚡ Interchange Station
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <span className="fare-dropdown-code">{s.code}</span>
                                                 </div>
                                             ))}
@@ -1229,23 +1217,29 @@ function HomePage({ onNavigate }) {
                                 <div className="fare-input-divider"></div>
 
                                 {/* Swap Circle */}
-                                <button className="fare-swap-circle" onClick={swapFareStations} title="Swap stations" type="button">
+                                <button className="fare-swap-circle" onClick={swapFareStations} title="Swap stations" type="button" aria-label="Swap departure and arrival stations">
                                     <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#1a3a5c', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>⇅</span>
                                 </button>
 
                                 {/* To Input */}
                                 <div className="fare-input-row" ref={fareToRef}>
-                                    <label>To</label>
+                                    <label>Arrival Station</label>
                                     <input
                                         type="text"
-                                        placeholder="Search To Station"
+                                        placeholder="Search Arrival Station (e.g. Edappally — Blue Line)"
                                         value={fareModalTo}
                                         autoComplete="off"
                                         onChange={e => {
                                             const v = e.target.value;
                                             setFareModalTo(v);
-                                            setFareResult({ fare: 0, distance: 0, calculated: false });
-                                            const filtered = v.trim() === '' ? allStations : allStations.filter(s => s.name.toLowerCase().includes(v.toLowerCase()));
+                                            setSelectedToStation(null);
+                                            setFareError(null);
+                                            setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+                                            const filtered = v.trim() === '' ? allStations : allStations.filter(s =>
+                                                s.name.toLowerCase().includes(v.toLowerCase()) ||
+                                                (s.code || '').toLowerCase().includes(v.toLowerCase()) ||
+                                                (s.lineLabel || '').toLowerCase().includes(v.toLowerCase())
+                                            );
                                             setFareModalToSuggestions(filtered);
                                             setShowFareToDropdown(true);
                                         }}
@@ -1257,10 +1251,28 @@ function HomePage({ onNavigate }) {
                                     {showFareToDropdown && fareModalToSuggestions.length > 0 && (
                                         <div className="fare-dropdown">
                                             {fareModalToSuggestions.map((s, i) => (
-                                                <div key={i} className="fare-dropdown-item"
-                                                    onMouseDown={e => { e.preventDefault(); setFareModalTo(s.name); setShowFareToDropdown(false); setFareResult({ fare: 0, distance: 0, calculated: false }); }}
+                                                <div
+                                                    key={s.id || i}
+                                                    className="fare-dropdown-item"
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setFareModalTo(s.fullLabel || `${s.name} — ${s.lineLabel || 'Blue Line'}`);
+                                                        setSelectedToStation(s);
+                                                        setShowFareToDropdown(false);
+                                                        setFareError(null);
+                                                        setFareResult({ fare: 0, distance: 0, estimatedMinutes: 0, totalStops: 0, interchanges: [], lines: [], calculated: false });
+                                                    }}
                                                 >
-                                                    <span className="fare-dropdown-name">{s.name}</span>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
+                                                        <span className="fare-dropdown-name">
+                                                            {s.name} <span style={{ color: s.lineColors?.[0] || '#0284c7', fontSize: '0.82rem', fontWeight: '600' }}>— {s.lineLabel || 'Blue Line'}</span>
+                                                        </span>
+                                                        {s.isInterchange && (
+                                                            <span style={{ fontSize: '0.72rem', color: '#8b5cf6', fontWeight: '700' }}>
+                                                                ⚡ Interchange Station
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <span className="fare-dropdown-code">{s.code}</span>
                                                 </div>
                                             ))}
@@ -1271,7 +1283,7 @@ function HomePage({ onNavigate }) {
 
                             {/* Actions */}
                             <div className="fare-actions-container">
-                                <button className="fare-reset-text-btn" onClick={resetFareModal}>
+                                <button className="fare-reset-text-btn" onClick={resetFareModal} type="button">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                                         <path d="M3 3v5h5" />
@@ -1281,43 +1293,149 @@ function HomePage({ onNavigate }) {
                                 <button
                                     className="fare-getfare-solid-btn"
                                     onClick={calculateFareByStations}
-                                    disabled={!fareModalFrom || !fareModalTo || fareModalFrom === fareModalTo}
+                                    disabled={!fareModalFrom || !fareModalTo || fareLoading}
+                                    type="button"
+                                    style={{
+                                        background: (!fareModalFrom || !fareModalTo) ? '#94a3b8' : '#00aeb5',
+                                        transition: 'background 0.2s, transform 0.1s'
+                                    }}
                                 >
-                                    GET FARE
+                                    {fareLoading ? 'CALCULATING...' : 'CALCULATE FARE'}
                                 </button>
                             </div>
 
                             {/* Details Container */}
                             <div className="fare-details-wrapper">
-                                <h4>FARE &amp; JOURNEY DETAILS</h4>
-                                <div className="fare-cards-flex">
-                                    <div className="fare-card-item">
-                                        <div className="fc-icon fc-purple">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <rect x="2" y="8" width="20" height="8" rx="2" ry="2" />
-                                                <line x1="6" y1="8" x2="6" y2="16" />
-                                                <line x1="18" y1="8" x2="18" y2="16" />
-                                                <line x1="2" y1="12" x2="22" y2="12" strokeDasharray="2 2" />
-                                            </svg>
-                                        </div>
-                                        <div className="fc-text">
-                                            <span className="fc-lbl">Journey Fare</span>
-                                            <span className="fc-val">₹ {fareResult.calculated ? fareResult.fare : 0}</span>
-                                        </div>
-                                    </div>
-                                    <div className="fare-card-item">
-                                        <div className="fc-icon fc-green">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                                                <circle cx="12" cy="9" r="2.5" />
-                                            </svg>
-                                        </div>
-                                        <div className="fc-text">
-                                            <span className="fc-lbl">Distance</span>
-                                            <span className="fc-val">{fareResult.calculated ? fareResult.distance : 0} km</span>
-                                        </div>
-                                    </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <h4 style={{ margin: 0 }}>FARE &amp; JOURNEY DETAILS</h4>
+                                    {fareResult.calculated && (
+                                        <span style={{ fontSize: '0.72rem', fontWeight: '800', color: '#166534', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px' }}>
+                                            ✓ KMRL Official Tariff
+                                        </span>
+                                    )}
                                 </div>
+
+                                {fareError && (
+                                    <div style={{
+                                        background: '#fef2f2',
+                                        border: '1px solid #fecaca',
+                                        padding: '10px 14px',
+                                        borderRadius: '10px',
+                                        color: '#b91c1c',
+                                        fontSize: '0.85rem',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px'
+                                    }}>
+                                        <span>⚠️</span>
+                                        <span>{fareError}</span>
+                                    </div>
+                                )}
+
+                                {fareLoading && (
+                                    <div style={{
+                                        textAlign: 'center',
+                                        padding: '20px 0',
+                                        color: '#0284c7',
+                                        fontWeight: '600',
+                                        fontSize: '0.92rem'
+                                    }}>
+                                        <div style={{
+                                            width: '26px',
+                                            height: '26px',
+                                            border: '3px solid #e0f2fe',
+                                            borderTop: '3px solid #00aeb5',
+                                            borderRadius: '50%',
+                                            animation: 'spin 0.8s linear infinite',
+                                            margin: '0 auto 8px'
+                                        }} />
+                                        Computing route &amp; applicable fare...
+                                    </div>
+                                )}
+
+                                {!fareLoading && (
+                                    <div className="fare-cards-flex" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
+                                        <div className="fare-card-item">
+                                            <div className="fc-icon fc-purple">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <rect x="2" y="8" width="20" height="8" rx="2" ry="2" />
+                                                    <line x1="6" y1="8" x2="6" y2="16" />
+                                                    <line x1="18" y1="8" x2="18" y2="16" />
+                                                    <line x1="2" y1="12" x2="22" y2="12" strokeDasharray="2 2" />
+                                                </svg>
+                                            </div>
+                                            <div className="fc-text">
+                                                <span className="fc-lbl">Journey Fare</span>
+                                                <span className="fc-val">₹ {fareResult.calculated ? fareResult.fare : 0}</span>
+                                            </div>
+                                        </div>
+                                        <div className="fare-card-item">
+                                            <div className="fc-icon fc-green">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                                                    <circle cx="12" cy="9" r="2.5" />
+                                                </svg>
+                                            </div>
+                                            <div className="fc-text">
+                                                <span className="fc-lbl">Distance</span>
+                                                <span className="fc-val">{fareResult.calculated ? fareResult.distance : 0} km</span>
+                                            </div>
+                                        </div>
+                                        <div className="fare-card-item">
+                                            <div className="fc-icon" style={{ background: '#0284c7' }}>
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <polyline points="12 6 12 12 16 14" />
+                                                </svg>
+                                            </div>
+                                            <div className="fc-text">
+                                                <span className="fc-lbl">Est. Time &amp; Stops</span>
+                                                <span className="fc-val">{fareResult.calculated ? `~${fareResult.estimatedMinutes}m (${fareResult.totalStops} stops)` : '0 min'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Interchange Information when route includes line change */}
+                                {fareResult.calculated && fareResult.interchanges && fareResult.interchanges.length > 0 && (
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '12px',
+                                        padding: '12px 14px',
+                                        marginTop: '4px',
+                                        textAlign: 'left'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                            <span style={{ fontSize: '1.1rem' }}>🔄</span>
+                                            <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#0f172a' }}>
+                                                Transfer Required at: <span style={{ color: '#00aeb5' }}>{fareResult.interchanges.join(', ')}</span>
+                                            </span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                            {fareResult.lines?.map((line, idx) => (
+                                                <React.Fragment key={idx}>
+                                                    <span style={{
+                                                        background: line.color || '#0284c7',
+                                                        color: '#ffffff',
+                                                        fontSize: '0.74rem',
+                                                        fontWeight: '800',
+                                                        padding: '3px 10px',
+                                                        borderRadius: '6px'
+                                                    }}>
+                                                        {line.name}
+                                                    </span>
+                                                    {idx < (fareResult.lines.length - 1) && (
+                                                        <span style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: '800' }}>
+                                                            ➔ Transfer at {fareResult.interchanges[idx] || fareResult.interchanges[0]} ➔
+                                                        </span>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Skyline */}

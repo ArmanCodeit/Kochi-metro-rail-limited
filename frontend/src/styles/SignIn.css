@@ -1,271 +1,686 @@
-body,
-html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Caudex', serif;
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   KOCHI METRO RAIL LIMITED — SIGN IN STYLESHEET
+   Authentic Design System: Kochi Metro Blue (#0057a8), KMRL Cyan/Teal (#059db2),
+   Eco Green (#00a859), Clean Card UI & Inter/Urbanist Typography.
+   ───────────────────────────────────────────────────────────────────────────── */
 
-.signin-container {
-    height: 100vh;
-    display: flex;
-    background: #ffffff;
-    align-items: stretch;
-    overflow: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800&display=swap');
 
-/* ── Media Side (Left) ── */
-.signin-media-side {
-    flex: 1;
-    position: relative;
-    display: none;
-    /* hidden on small screens */
-}
-
-@media (min-width: 900px) {
-    .signin-media-side {
-        display: block;
-    }
-}
-
-.signin-media-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(192, 244, 251, 0.4) 0%, rgba(185, 132, 250, 0.3) 100%);
-    z-index: 2;
-}
-
-.signin-image-bg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-/* ── Form Side (Right) ── */
-.signin-form-side {
-    flex: 1;
-    display: flex;
-    background: #ffffff;
-    padding: 2rem;
-    overflow-y: auto;
-    height: 100vh;
-}
-
-.signin-form-wrapper {
-    max-width: 480px;
-    width: 100%;
-    margin: auto;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-
-.signin-header {
-    margin-bottom: 2.5rem;
-}
-
-.signin-header h1 {
-    color: #630c5e;
-    /* Deep purple matching image logic */
-    font-size: 3.2rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: 700;
-}
-
-.signin-header p {
-    color: #666;
-    margin: 0;
-    font-size: 1.1rem;
-    font-family: 'Urbanist', sans-serif;
-    /* Keep a readable font for small text if desired, or all Caudex */
-}
-
-/* ── Form Inputs ── */
-.signin-form {
+.signin-page {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-
-.form-group label {
-    font-weight: 500;
-    color: #718096;
-    font-size: 0.95rem;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.form-group input[type="text"],
-.form-group input[type="password"],
-.captcha-input {
-    width: 100%;
-    padding: 1.1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    color: #2d3748;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
     box-sizing: border-box;
 }
 
-.form-group input:focus {
-    outline: none;
+.signin-page *,
+.signin-page *::before,
+.signin-page *::after {
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────
+   TOP BRAND BAR
+   ───────────────────────────────────────────── */
+.signin-page .auth-top-bar {
     background: #ffffff;
-    border-color: #b984fa;
-    box-shadow: 0 0 0 3px rgba(185, 132, 250, 0.2);
+    border-bottom: 1px solid #eaeff5;
+    box-shadow: 0 2px 10px rgba(0, 60, 130, 0.05);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
-.form-group input.input-error {
-    border-color: #dc3545;
+.signin-page .auth-top-bar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* ── Password Toggle ── */
-.password-input-wrapper {
+.signin-page .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.signin-page .auth-brand:hover {
+    opacity: 0.92;
+}
+
+.signin-page .auth-kmrl-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 5px rgba(0, 87, 168, 0.15));
+}
+
+.signin-page .auth-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.signin-page .auth-brand-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #0057a8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.signin-page .auth-brand-subtitle {
+    font-size: 0.76rem;
+    color: #5a7a9a;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.signin-page .auth-brand-tagline {
+    font-size: 0.65rem;
+    color: #00a859;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+.signin-page .auth-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.signin-page .auth-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.signin-page .auth-back-btn:hover {
+    background: #e2e8f0;
+    color: #0057a8;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────────
+   MAIN AUTHENTICATION CONTAINER
+   ───────────────────────────────────────────── */
+.signin-page .auth-main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+}
+
+.signin-page .auth-card-shell {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    max-width: 1040px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 45px -10px rgba(0, 60, 130, 0.12), 0 4px 15px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    overflow: hidden;
+    min-height: 620px;
+}
+
+/* ─────────────────────────────────────────────
+   LEFT PANEL — KMRL TRANSIT SHOWCASE
+   ───────────────────────────────────────────── */
+.signin-page .auth-showcase-side {
+    position: relative;
+    background: linear-gradient(145deg, #003744 0%, #065a6f 40%, #008197 75%, #059db2 100%);
+    color: #ffffff;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* Decorative background ripples */
+.signin-page .showcase-watermark-ring {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.signin-page .showcase-watermark-ring.secondary {
+    top: auto;
+    bottom: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 75%);
+}
+
+.signin-page .showcase-top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #e0f2fe;
+    align-self: flex-start;
+    position: relative;
+    z-index: 2;
+}
+
+.signin-page .showcase-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+}
+
+.signin-page .showcase-hero {
+    margin: 1.5rem 0 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.signin-page .showcase-title {
+    font-family: 'Urbanist', 'Inter', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.5px;
+}
+
+.signin-page .showcase-subtitle {
+    font-size: 0.94rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+}
+
+.signin-page .showcase-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.signin-page .showcase-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.signin-page .feature-icon-bubble {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #e0f2fe;
+}
+
+.signin-page .feature-text h4 {
+    margin: 0 0 3px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.signin-page .feature-text p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.signin-page .showcase-footer {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.82);
+    position: relative;
+    z-index: 2;
+}
+
+.signin-page .showcase-footer strong {
+    color: #38bdf8;
+    letter-spacing: 0.5px;
+}
+
+/* ─────────────────────────────────────────────
+   RIGHT PANEL — SIGN IN FORM
+   ───────────────────────────────────────────── */
+.signin-page .auth-form-side {
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2.8rem;
+}
+
+.signin-page .auth-form-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.signin-page .auth-form-header {
+    margin-bottom: 2rem;
+}
+
+.signin-page .auth-pill-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #059db2;
+    background: #e0f7fa;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.signin-page .auth-form-header h1 {
+    font-family: 'Urbanist', 'Inter', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.5px;
+}
+
+.signin-page .auth-form-header p {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Form alert error banner */
+.signin-page .form-alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Groups */
+.signin-page .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.signin-page .form-group label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.signin-page .req-star {
+    color: #e63946;
+    font-weight: 700;
+}
+
+.signin-page .form-group input[type="text"],
+.signin-page .form-group input[type="password"] {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.signin-page .form-group input::placeholder {
+    color: #94a3b8;
+    font-size: 0.88rem;
+}
+
+.signin-page .form-group input:focus {
+    background: #ffffff;
+    border-color: #059db2;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.18);
+}
+
+.signin-page .form-group input.input-error {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.signin-page .field-error-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #dc2626;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+/* Password wrapper */
+.signin-page .password-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.toggle-password {
+.signin-page .password-input-wrapper input {
+    padding-right: 46px !important;
+}
+
+.signin-page .toggle-password-btn {
     position: absolute;
-    right: 15px;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.signin-page .toggle-password-btn:hover {
+    color: #059db2;
+    background: #f1f5f9;
+}
+
+/* CAPTCHA Row */
+.signin-page .captcha-row {
+    display: grid;
+    grid-template-columns: 140px 44px 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.signin-page .captcha-card-frame {
+    height: 46px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 2px 4px;
+}
+
+.signin-page .captcha-card-frame img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.signin-page .refresh-captcha-btn {
+    height: 46px;
+    width: 44px;
+    background: #f0fdfa;
+    border: 1.5px solid #99f6e4;
+    border-radius: 8px;
+    color: #0d9488;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.signin-page .refresh-captcha-btn:hover {
+    background: #059db2;
+    color: #ffffff;
+    border-color: #059db2;
+    transform: rotate(30deg);
+}
+
+.signin-page .captcha-code-input {
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* Links row */
+.signin-page .form-links-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.signin-page .forgot-prompt {
+    color: #64748b;
+}
+
+.signin-page .inline-link-btn {
     background: none;
     border: none;
+    color: #0057a8;
+    font-weight: 600;
+    font-size: 0.85rem;
     cursor: pointer;
-    font-size: 1.2rem;
-    color: #a0aec0;
+    padding: 0;
+    text-decoration: none;
+    transition: color 0.15s ease;
 }
 
-/* ── CAPTCHA Block ── */
-.captcha-group {
-    margin-bottom: 0px;
+.signin-page .inline-link-btn:hover {
+    color: #003f7f;
+    text-decoration: underline;
 }
 
-.captcha-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.captcha-image-wrapper {
-    position: relative;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 52px;
-    background: white;
-    display: flex;
-    align-items: center;
-}
-
-.captcha-image-wrapper img {
-    height: 100%;
-    display: block;
-}
-
-.refresh-captcha {
-    background: rgba(255, 255, 255, 0.8);
+/* Primary Submit Button */
+.signin-page .auth-primary-btn {
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(135deg, #059db2 0%, #008197 100%);
+    color: #ffffff;
     border: none;
-    height: 100%;
-    width: 40px;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-left: 1px solid #e2e8f0;
-    transition: background 0.2s;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(5, 157, 178, 0.32);
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
 }
 
-.refresh-captcha:hover {
-    background: #f1f5f9;
+.signin-page .auth-primary-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #048799 0%, #006f82 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(5, 157, 178, 0.42);
 }
 
-/* ── Messages & Links ── */
-.error-text {
-    color: #e53e3e;
-    font-size: 0.85rem;
-    font-family: 'Urbanist', sans-serif;
+.signin-page .auth-primary-btn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
-.error-message {
-    background: #fff5f5;
-    color: #c53030;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #feb2b2;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.forgot-password {
-    text-align: right;
-    font-size: 0.95rem;
-    margin-top: -10px;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.forgot-text {
-    color: #718096;
-}
-
-.forgot-password a {
-    color: #630c5e;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
-/* ── Submit Button ── */
-.btn-signin-submit {
-    padding: 1.1rem;
-    background: #630c5e;
-    /* Matching the deep purple button */
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 5px;
-    font-family: 'Urbanist', sans-serif;
-}
-
-.btn-signin-submit:hover:not(:disabled) {
-    background: #4a0746;
-}
-
-.btn-signin-submit:disabled {
-    opacity: 0.6;
+.signin-page .auth-primary-btn:disabled {
+    opacity: 0.7;
     cursor: not-allowed;
 }
 
-/* ── Bottom Link ── */
-.signup-link {
+.signin-page .btn-spinner-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.signin-page .auth-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: authSpin 0.7s linear infinite;
+}
+
+@keyframes authSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Switch Page Prompt */
+.signin-page .auth-switch-prompt {
+    margin-top: 1.75rem;
     text-align: center;
-    color: #718096;
-    font-size: 0.95rem;
-    font-family: 'Urbanist', sans-serif;
-    margin-top: 10px;
+    font-size: 0.88rem;
+    color: #475569;
 }
 
-.signup-link a {
-    color: #630c5e;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
+.signin-page .switch-page-link {
+    background: none;
+    border: none;
+    color: #059db2;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s ease;
 }
 
-.signup-link a:hover {
+.signin-page .switch-page-link:hover {
+    color: #0057a8;
     text-decoration: underline;
+}
+
+/* ─────────────────────────────────────────────
+   BOTTOM FOOTER
+   ───────────────────────────────────────────── */
+.signin-page .auth-bottom-footer {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    border-top: 1px solid #eaeff5;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.signin-page .auth-bottom-footer p {
+    margin: 0;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE MEDIA QUERIES
+   ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .signin-page .auth-card-shell {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        min-height: auto;
+    }
+
+    .signin-page .auth-showcase-side {
+        padding: 2.25rem 2rem;
+    }
+
+    .signin-page .showcase-title {
+        font-size: 1.7rem;
+    }
+
+    .signin-page .showcase-features-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .signin-page .auth-form-side {
+        padding: 2.5rem 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .signin-page .auth-top-bar-inner {
+        padding: 8px 16px;
+    }
+
+    .signin-page .auth-kmrl-logo {
+        height: 42px;
+    }
+
+    .signin-page .auth-brand-title {
+        font-size: 1rem;
+    }
+
+    .signin-page .auth-main-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .signin-page .auth-showcase-side {
+        display: none; /* Clean focus on form for mobile devices */
+    }
+
+    .signin-page .auth-form-side {
+        padding: 2rem 1.5rem;
+    }
+
+    .signin-page .captcha-row {
+        grid-template-columns: 120px 42px 1fr;
+    }
 }

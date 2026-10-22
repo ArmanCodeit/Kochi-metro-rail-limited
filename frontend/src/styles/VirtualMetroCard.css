@@ -1,0 +1,425 @@
+/* ── VIRTUAL METRO CARD COMPONENT STYLES ── */
+
+.virtual-card-wrapper {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    user-select: none;
+}
+
+.virtual-metro-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.586;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(5, 157, 178, 0.35), 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.virtual-metro-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    padding: 1.6rem 2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ── FRONT FACE ── */
+.card-front {
+    background: linear-gradient(135deg, #003744 0%, #065a6f 40%, #008197 75%, #059db2 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Subtle background metallic shimmer and track watermark */
+.card-front::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 60%),
+                linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%);
+    pointer-events: none;
+}
+
+.card-front::after {
+    content: '';
+    position: absolute;
+    right: -10%;
+    bottom: -15%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Top bar: branding and wave */
+.card-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.card-kmrl-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.card-kmrl-logo-icon {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: -0.5px;
+    color: #38bdf8;
+}
+
+.card-brand-titles {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    line-height: 1.1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.card-brand-tagline {
+    font-size: 0.68rem;
+    color: #7dd3fc;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.card-top-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.card-nfc-wave {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.nfc-arc {
+    width: 4px;
+    border-radius: 3px;
+    background-color: #f97316;
+}
+.nfc-arc-1 { height: 8px; opacity: 0.6; }
+.nfc-arc-2 { height: 14px; opacity: 0.8; }
+.nfc-arc-3 { height: 20px; opacity: 1; }
+
+.card-kochi1-badge {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+/* Chip & Balance row */
+.card-chip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.card-emv-chip {
+    width: 46px;
+    height: 34px;
+    background: linear-gradient(135deg, #ffd700 0%, #e6b800 40%, #ffea80 70%, #d4af37 100%);
+    border-radius: 6px;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #b8860b;
+    overflow: hidden;
+}
+
+.card-emv-chip::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.card-emv-chip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.card-balance-pill {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 0.85rem;
+    border-radius: 12px;
+    text-align: right;
+}
+
+.card-balance-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.card-balance-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #38ef7d;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+/* Card Number */
+.card-number-row {
+    position: relative;
+    z-index: 2;
+    margin: 0.4rem 0;
+}
+
+.card-number-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Bottom details */
+.card-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 2;
+}
+
+.card-holder-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-detail-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.card-holder-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-valid-thru {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.card-valid-date {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.card-transit-badge {
+    text-align: right;
+}
+
+.transit-prepaid-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #f97316;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* ── BACK FACE ── */
+.card-back {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    color: #ffffff;
+    transform: rotateY(180deg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1.2rem 0 1.2rem 0;
+}
+
+.card-mag-stripe {
+    width: 100%;
+    height: 44px;
+    background: #111827;
+    margin-top: 0.8rem;
+}
+
+.card-back-content {
+    padding: 0 1.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    margin-top: 1rem;
+}
+
+.card-cvv-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.card-sig-panel {
+    flex: 1;
+    height: 32px;
+    background: #ffffff;
+    border-radius: 4px;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0, 0, 0, 0.05) 4px, rgba(0, 0, 0, 0.05) 8px);
+}
+
+.card-cvv-box {
+    background: #ffffff;
+    color: #0f172a;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+}
+
+.card-back-disclaimer {
+    font-size: 0.62rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.card-back-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+/* Card Action Bar below card */
+.card-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0 0.5rem;
+}
+
+.card-flip-btn, .card-refresh-btn {
+    background: rgba(5, 157, 178, 0.1);
+    border: 1px solid rgba(5, 157, 178, 0.3);
+    color: #059db2;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.card-flip-btn:hover, .card-refresh-btn:hover {
+    background: #059db2;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.guest-card-banner {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #b45309;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .virtual-card-wrapper {
+        max-width: 100%;
+    }
+    .card-face {
+        padding: 1.2rem 1.4rem;
+    }
+    .card-number-text {
+        font-size: 1.15rem;
+        letter-spacing: 2px;
+    }
+    .card-balance-value {
+        font-size: 1.05rem;
+    }
+}

@@ -1,57 +1,105 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/FindMetro.css';
 import MapMetro from '../components/Metro/MapMetro';
+import SchematicMetroMap from '../components/Metro/SchematicMetroMap';
 import metroLinesData from '../data/metroLines';
+
+const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+        if (window.Razorpay) {
+            resolve(true);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+};
 
 function FindMetro({ onNavigate, user, onLogout }) {
     const [metroLines, setMetroLines] = useState([]);
     const [selectedLine, setSelectedLine] = useState(null);
-    const [fromStation, setFromStation] = useState('');
-    const [toStation, setToStation] = useState('');
-    const [tripDate, setTripDate] = useState(new Date().toISOString().split('T')[0]);
-    const [passengers, setPassengers] = useState('1');
+    const [fromStation, setFromStation] = useState('Aluva');
+    const [toStation, setToStation] = useState('Infopark');
+    const [passengers, setPassengers] = useState(1);
     const [allStations, setAllStations] = useState([]);
     const [fromSuggestions, setFromSuggestions] = useState([]);
     const [toSuggestions, setToSuggestions] = useState([]);
     const [showFromDropdown, setShowFromDropdown] = useState(false);
     const [showToDropdown, setShowToDropdown] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
+
+    // Multi-route state
+    const [candidateRoutes, setCandidateRoutes] = useState([]);
+    const [selectedRoute, setSelectedRoute] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [availableTrains, setAvailableTrains] = useState([]);
-    const [liveTrains, setLiveTrains] = useState([]);
     const [errors, setErrors] = useState({});
-    const [ticketType, setTicketType] = useState('card');
-    const [selectedService, setSelectedService] = useState('all');
-    const [showBookingModal, setShowBookingModal] = useState(false);
-    const [selectedTrain, setSelectedTrain] = useState(null);
-    const [highlightedRoute, setHighlightedRoute] = useState(null);
+
+    // Map view mode: 'schematic' (DMRC-inspired) or 'gis' (Leaflet OpenStreetMap)
+    const [mapViewMode, setMapViewMode] = useState('schematic');
+    const [highlightedRouteStations, setHighlightedRouteStations] = useState([]);
     const [selectedStation, setSelectedStation] = useState(null);
+
+    // Live trains & booking
+    const [liveTrains, setLiveTrains] = useState([]);
+    const [showJourneySummary, setShowJourneySummary] = useState(false);
+    const [isPaying, setIsPaying] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('razorpay'); // 'razorpay' | 'virtual_card'
+    const [paymentError, setPaymentError] = useState(null);
+
     const fromDropdownRef = useRef(null);
     const toDropdownRef = useRef(null);
     const resultsRef = useRef(null);
-    const [showJourneySummary, setShowJourneySummary] = useState(false);
-    const [showPaymentOptions, setShowPaymentOptions] = useState(false);
-    const [isPaying, setIsPaying] = useState(false);
 
-    // Load metro lines and stations on component mount
+    // Check for pre-planned trip passed from Recharge page or prior navigation
     useEffect(() => {
-        fetchMetroLines();
-        fetchTrains();
-        const tv = setInterval(() => fetchLiveTrains(), 15000);
-        return () => clearInterval(tv);
+        try {
+            const savedTrip = localStorage.getItem('kmrl_planned_trip');
+            if (savedTrip) {
+                const parsed = JSON.parse(savedTrip);
+                if (parsed.fromStation && parsed.toStation) {
+                    setFromStation(parsed.fromStation);
+                    setToStation(parsed.toStation);
+                    if (parsed.route) {
+                        setCandidateRoutes([parsed.route]);
+                        setSelectedRoute(parsed.route);
+                        setHighlightedRouteStations(parsed.route.fullPath || []);
+                        setShowJourneySummary(true);
+                    }
+                }
+                localStorage.removeItem('kmrl_planned_trip');
+            }
+        } catch {}
     }, []);
 
-    const fetchTrains = async () => {
-        try {
-            const resp = await fetch('/api/metro/trains/live');
-            if (resp.ok) {
-                const data = await resp.json();
-                setAvailableTrains(data || []);
-            }
-        } catch (err) {
-            console.warn('Unable to fetch trains', err);
-        }
-    };
+    // Load metro network from backend
+    useEffect(() => {
+        fetch('/api/metro/network')
+            .then(res => res.json())
+            .then(data => {
+                if (data.stations) {
+                    setAllStations(data.stations);
+                }
+            })
+            .catch(() => {
+                // Local fallback
+                const stations = [];
+                metroLinesData.forEach(line => {
+                    (line.stations || []).forEach(st => {
+                        if (!stations.find(s => s.name === st.name)) {
+                            stations.push({ name: st.name, code: st.code || st.name.slice(0, 3).toUpperCase(), lineName: line.name });
+                        }
+                    });
+                });
+                setAllStations(stations);
+            });
+
+        fetchLiveTrains();
+        const tv = setInterval(fetchLiveTrains, 15000);
+        return () => clearInterval(tv);
+    }, []);
 
     const fetchLiveTrains = async () => {
         try {
@@ -60,9 +108,7 @@ function FindMetro({ onNavigate, user, onLogout }) {
                 const data = await resp.json();
                 setLiveTrains(data || []);
             }
-        } catch (err) {
-            console.warn('Unable to fetch live trains', err);
-        }
+        } catch {}
     };
 
     useEffect(() => {
@@ -79,557 +125,470 @@ function FindMetro({ onNavigate, user, onLogout }) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const fetchMetroLines = async () => {
-        // Initialize with local data first (always available)
-        setMetroLines(metroLinesData);
-        const stations = [];
-        metroLinesData.forEach(line => {
-            (line.stations || []).forEach(station => {
-                if (!stations.find(s => s.name === station.name)) {
-                    stations.push({
-                        name: station.name,
-                        code: station.code || station.name.slice(0, 3).toUpperCase(),
-                        lat: station.lat,
-                        lng: station.lng,
-                        lineName: line.name,
-                        lineColor: line.color
-                    });
-                }
-            });
-        });
-        setAllStations(stations);
-
-        // Try to fetch from backend (optional enhancement)
-        try {
-            const response = await fetch('/api/lines/lines');
-            if (response.ok) {
-                const data = await response.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    setMetroLines(data);
-                    const backendStations = [];
-                    data.forEach(line => {
-                        (line.stations || []).forEach(station => {
-                            if (!backendStations.find(s => s.name === station.name)) {
-                                backendStations.push({
-                                    name: station.name,
-                                    code: station.code || station.name.slice(0, 3).toUpperCase(),
-                                    lat: station.lat,
-                                    lng: station.lng,
-                                    lineName: line.name,
-                                    lineColor: line.color
-                                });
-                            }
-                        });
-                    });
-                    setAllStations(backendStations);
-                }
-            }
-        } catch (error) {
-            console.log('Backend not available, using local data:', error.message);
-        }
-    };
-
-    // Helper: normalize any route-like object to expected UI shape
-    const normalizeRoute = (r) => {
-        if (!r) return null;
-        return {
-            lineName: r.lineName || r.line || r.line_name || (r.lineObj && r.lineObj.name) || 'Line',
-            lineColor: r.lineColor || r.color || (r.lineObj && r.lineObj.color) || '#999',
-            fromStation: r.fromStation || r.from || r.origin || r.start || '',
-            toStation: r.toStation || r.to || r.destination || r.end || '',
-            estimatedTime: Number(r.estimatedTime ?? r.duration ?? r.time ?? r.durationMinutes ?? 0),
-            numberOfStops: Number(r.numberOfStops ?? r.stops ?? r.stopCount ?? 0),
-            fare: Number(r.fare ?? r.price ?? r.cost ?? 0),
-            intermediateStations: r.intermediateStations || r.stationsBetween || []
-        };
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        onLogout();
-        onNavigate('signin');
-    };
-
-    const handleSwapStations = () => {
-        const tempStation = fromStation;
-        setFromStation(toStation);
-        setToStation(tempStation);
-
-        setErrors(prev => {
-            const newErrors = { ...prev };
-            delete newErrors.fromStation;
-            delete newErrors.toStation;
-            delete newErrors.submit;
-            return newErrors;
-        });
-    };
-
-    const handleSelectChange = (type, value) => {
-        if (type === 'from') {
+    const handleSelectChange = (field, value) => {
+        if (field === 'from') {
             setFromStation(value);
-
-            if (value.trim() === '') {
-                setFromSuggestions(allStations); // Show all stations when empty
-            } else {
-                const filtered = allStations.filter(station =>
-                    station.name.toLowerCase().includes(value.toLowerCase()) ||
-                    station.code.toLowerCase().includes(value.toLowerCase())
-                );
-                setFromSuggestions(filtered);
-            }
             setShowFromDropdown(true);
-        } else if (type === 'to') {
+            const filtered = allStations.filter(s => s.name.toLowerCase().includes(value.toLowerCase()));
+            setFromSuggestions(filtered);
+        } else {
             setToStation(value);
-
-            if (value.trim() === '') {
-                setToSuggestions(allStations); // Show all stations when empty
-            } else {
-                const filtered = allStations.filter(station =>
-                    station.name.toLowerCase().includes(value.toLowerCase()) ||
-                    station.code.toLowerCase().includes(value.toLowerCase())
-                );
-                setToSuggestions(filtered);
-            }
             setShowToDropdown(true);
+            const filtered = allStations.filter(s => s.name.toLowerCase().includes(value.toLowerCase()));
+            setToSuggestions(filtered);
         }
     };
 
-    const selectFromStation = (station) => {
-        setFromStation(station.name);
-        setFromSuggestions([]);
+    const selectFromStation = (st) => {
+        setFromStation(st.name);
         setShowFromDropdown(false);
     };
 
-    const selectToStation = (station) => {
-        setToStation(station.name);
-        setToSuggestions([]);
+    const selectToStation = (st) => {
+        setToStation(st.name);
         setShowToDropdown(false);
     };
 
+    const handleSwapStations = () => {
+        const temp = fromStation;
+        setFromStation(toStation);
+        setToStation(temp);
+    };
+
+    // Graph-based multi-line route calculation
     const handleSearch = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setErrors({});
-        setSearchResults([]);
+        setCandidateRoutes([]);
+        setSelectedRoute(null);
+        setHighlightedRouteStations([]);
 
         if (!fromStation) {
-            setErrors(prev => ({ ...prev, fromStation: 'Please select a starting station' }));
+            setErrors(prev => ({ ...prev, fromStation: 'Please select an origin station' }));
             return;
         }
         if (!toStation) {
             setErrors(prev => ({ ...prev, toStation: 'Please select a destination' }));
             return;
         }
-        if (fromStation === toStation) {
-            setErrors(prev => ({ ...prev, submit: 'From and To stations cannot be the same' }));
+        if (fromStation.trim().toLowerCase() === toStation.trim().toLowerCase()) {
+            setErrors(prev => ({ ...prev, submit: 'Origin and Destination stations cannot be the same' }));
             return;
         }
 
         setLoading(true);
         try {
-            // Use local lines data to compute route (mock)
-            try {
-                const linesResp = await fetch('/api/lines/lines');
-                if (linesResp.ok) {
-                    const lines = await linesResp.json();
-                    const results = [];
-                    (lines || []).forEach(line => {
-                        const stations = (line.stations || []).map(s => s.name);
-                        const fromIdx = stations.indexOf(fromStation);
-                        const toIdx = stations.indexOf(toStation);
-                        if (fromIdx >= 0 && toIdx >= 0 && fromIdx < toIdx) {
-                            results.push({
-                                lineName: line.name,
-                                lineColor: line.color,
-                                fromStation,
-                                toStation,
-                                estimatedTime: Math.abs(toIdx - fromIdx) * 3,
-                                numberOfStops: Math.abs(toIdx - fromIdx),
-                                fare: 10 + (Math.abs(toIdx - fromIdx) * 5),
-                                intermediateStations: stations.slice(fromIdx + 1, toIdx)
-                            });
-                        }
-                    });
-                    if (results.length > 0) {
-                        setSearchResults(results);
-                        setShowJourneySummary(true);
-                    } else {
-                        const localRoute = computeLocalRoute(fromStation, toStation, selectedLine);
-                        if (localRoute) {
-                            setSearchResults([localRoute]);
-                            setShowJourneySummary(true);
-                        } else setErrors(prev => ({ ...prev, submit: 'No route found for selected stations' }));
-                    }
-                }
-            } catch (err) {
-                console.error('Local route search failed:', err);
-                const localRoute = computeLocalRoute(fromStation, toStation, selectedLine);
-                if (localRoute) {
-                    setSearchResults([localRoute]);
-                    setShowJourneySummary(true);
-                } else setErrors(prev => ({ ...prev, submit: 'No route found for selected stations' }));
-            }
-        } catch (error) {
-            console.error('Error searching route:', error);
-            const localRoute = computeLocalRoute(fromStation, toStation, selectedLine);
-            if (localRoute) {
-                setSearchResults([localRoute]);
-                setShowJourneySummary(true);
+            const resp = await fetch('/api/metro/plan-routes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fromStation, toStation })
+            });
+
+            const data = await resp.json();
+
+            if (resp.ok && data.routes && data.routes.length > 0) {
+                setCandidateRoutes(data.routes);
+                setSelectedRoute(data.routes[0]);
+                setHighlightedRouteStations(data.routes[0].fullPath || []);
+                setTimeout(() => {
+                    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             } else {
-                setErrors(prev => ({ ...prev, submit: 'Error searching routes. Please try again.' }));
+                setErrors(prev => ({ ...prev, submit: data.message || 'No connected metro routes found between these stations.' }));
             }
+        } catch (err) {
+            setErrors(prev => ({ ...prev, submit: 'Failed to connect to route planning engine.' }));
         } finally {
             setLoading(false);
-            setTimeout(() => {
-                if (resultsRef.current) {
-                    resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 150);
         }
     };
 
-    const computeLocalRoute = (from, to, selectedLineId) => {
-        const fromStn = allStations.find(s => s.name === from);
-        const toStn = allStations.find(s => s.name === to);
-
-        if (!fromStn || !toStn) return null;
-
-        // Find a line that contains both stations
-        const line = metroLines.find(l => {
-            const fromExists = (l.stations || []).some(s => s.name === from);
-            const toExists = (l.stations || []).some(s => s.name === to);
-            return fromExists && toExists;
-        });
-
-        if (!line) return null;
-
-        const stations = line.stations || [];
-        const fromIdx = stations.findIndex(s => s.name === from);
-        const toIdx = stations.findIndex(s => s.name === to);
-
-        if (fromIdx === -1 || toIdx === -1) return null;
-
-        const intermediateStations = stations.slice(
-            Math.min(fromIdx, toIdx) + 1,
-            Math.max(fromIdx, toIdx)
-        );
-
-        return {
-            lineName: line.name,
-            lineColor: line.color,
-            fromStation: from,
-            toStation: to,
-            estimatedTime: Math.abs(toIdx - fromIdx) * 3,
-            numberOfStops: Math.abs(toIdx - fromIdx),
-            fare: 10 + (Math.abs(toIdx - fromIdx) * 5),
-            intermediateStations: intermediateStations.map(s => ({ name: s.name }))
-        };
+    const handleSelectRouteCard = (route) => {
+        setSelectedRoute(route);
+        setHighlightedRouteStations(route.fullPath || []);
     };
 
-    const handleMapStationClick = (station, line) => {
-        setSelectedStation({ ...station, lineName: line.name });
+    // Proceed to Review & Checkout
+    const handleProceedToReview = (route) => {
+        setSelectedRoute(route);
+        setHighlightedRouteStations(route.fullPath || []);
+        setShowJourneySummary(true);
     };
 
-    const showRouteOnMap = (route) => {
-        setSelectedLine(null);
-        const fromStn = allStations.find(s => s.name === route.fromStation);
-        const toStn = allStations.find(s => s.name === route.toStation);
+    // Ticket purchase via Razorpay or Virtual Card
+    const handleCompletePaymentAndIssueTicket = async () => {
+        if (!selectedRoute) return;
+        setIsPaying(true);
+        setPaymentError(null);
 
-        if (fromStn && toStn) {
-            setHighlightedRoute({
-                from: { lat: fromStn.lat, lng: fromStn.lng, name: route.fromStation },
-                to: { lat: toStn.lat, lng: toStn.lng, name: route.toStation }
-            });
-        }
-    };
+        const token = localStorage.getItem('kmrl_token');
 
-    const handleBookTicket = (route) => {
-        const normalized = normalizeRoute(route);
-        setSelectedTrain(normalized || route);
-        setShowBookingModal(true);
-    };
-
-    const closeBookingModal = () => {
-        setShowBookingModal(false);
-        setSelectedTrain(null);
-        setTicketType('single');
-        setSelectedService('all');
-    };
-
-    const submitBooking = async (trainToBook = selectedTrain) => {
-        if (!trainToBook) return;
         try {
-            // Ensure we send station CODES for single journey bookings.
-            const getCodeFor = (stationNameOrCode) => {
-                if (!stationNameOrCode) return null;
-                // if it's already a code (3-5 chars uppercase) prefer it
-                const maybe = allStations.find(s => (s.code || s.id) === stationNameOrCode || s.name === stationNameOrCode);
-                if (maybe) return (maybe.code || maybe.id) || stationNameOrCode;
-                // try case-insensitive name match
-                const found = allStations.find(s => s.name.toLowerCase() === String(stationNameOrCode).toLowerCase());
-                return found ? (found.code || found.id) : stationNameOrCode;
-            };
-
-            const payload = {
-                fromStation: getCodeFor(trainToBook.fromStation),
-                toStation: getCodeFor(trainToBook.toStation),
-                passengerName: (user && user.fullName) || '',
-                passengerPhone: '',
-                type: 'single',
-                passengers: Number(passengers),
-                email: (user && user.email) || undefined
-            };
-
-            const headers = { 'Content-Type': 'application/json' };
-            const token = localStorage.getItem('kmrl_token');
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            // Prefer server-side booking when backend available
-            try {
-                const resp = await fetch('/api/metro/book', { method: 'POST', headers, body: JSON.stringify(payload) });
-                if (resp.ok) {
-                    const data = await resp.json();
-                    const bookingObj = {
-                        bookingId: data.bookingId,
-                        fare: data.fare,
-                        ticketUrl: data.ticketUrl,
-                        fromStation: trainToBook.fromStation || payload.fromStation,
-                        toStation: trainToBook.toStation || payload.toStation,
-                        passengerName: payload.passengerName,
-                        email: payload.email,
-                        type: payload.type,
-                        date: new Date().toLocaleString(),
-                        createdAt: Date.now(),
-                        status: 'Success',
-                        method: 'Card/UPI'
-                    };
-                    localStorage.setItem('kmrl_latest_booking', JSON.stringify(bookingObj));
-
-                    const txns = JSON.parse(localStorage.getItem('kmrl_all_transactions') || '[]');
-                    txns.push(bookingObj);
-                    localStorage.setItem('kmrl_all_transactions', JSON.stringify(txns));
-
-                    closeBookingModal();
-                    onNavigate('ticket');
+            if (paymentMethod === 'virtual_card') {
+                // Pay directly from user's Virtual Metro Card balance
+                if (!token) {
+                    alert('Please sign in to pay with your Virtual Metro Card.');
+                    if (onNavigate) onNavigate('signin');
                     return;
                 }
-            } catch (err) {
-                console.warn('Server booking failed, falling back to local mock', err);
+
+                const res = await fetch('/api/metro/tickets/pay-with-card', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        fromStation,
+                        toStation,
+                        routeId: selectedRoute.routeId,
+                        passengers: Number(passengers),
+                        passengerName: user?.fullName || 'Metro Passenger'
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success && data.ticket) {
+                    localStorage.setItem('kmrl_latest_booking', JSON.stringify(data.ticket));
+                    setShowJourneySummary(false);
+                    if (onNavigate) onNavigate('ticket');
+                } else {
+                    setPaymentError(data.message || 'Virtual Card payment failed.');
+                }
+            } else {
+                // Official Razorpay Checkout Test Payment
+                const isLoaded = await loadRazorpayScript();
+                if (!isLoaded) {
+                    throw new Error('Could not load Razorpay payment gateway.');
+                }
+
+                // 1. Create order on backend
+                const orderRes = await fetch('/api/metro/tickets/create-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        fromStation,
+                        toStation,
+                        routeId: selectedRoute.routeId,
+                        passengers: Number(passengers)
+                    })
+                });
+
+                const orderData = await orderRes.json();
+                if (!orderRes.ok || !orderData.orderId) {
+                    throw new Error(orderData.message || 'Failed to initialize Razorpay ticket order.');
+                }
+
+                // 2. Open Razorpay Checkout
+                const options = {
+                    key: orderData.keyId,
+                    amount: orderData.amount,
+                    currency: orderData.currency || 'INR',
+                    name: 'Kochi Metro Rail Limited',
+                    description: `5-Hour QR Pass: ${fromStation} → ${toStation}`,
+                    image: '/images/kmrl-logo.png',
+                    order_id: orderData.orderId,
+                    prefill: orderData.prefill || {},
+                    theme: { color: '#059db2' },
+                    handler: async function (response) {
+                        try {
+                            // 3. Verify signature server-side and issue 5-hour ticket
+                            const verifyRes = await fetch('/api/metro/tickets/verify-and-issue', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                                },
+                                body: JSON.stringify({
+                                    razorpayOrderId: response.razorpay_order_id,
+                                    razorpayPaymentId: response.razorpay_payment_id,
+                                    razorpaySignature: response.razorpay_signature,
+                                    fromStation,
+                                    toStation,
+                                    routeId: selectedRoute.routeId,
+                                    passengers: Number(passengers),
+                                    passengerName: user?.fullName || 'Metro Passenger'
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok && verifyData.success && verifyData.ticket) {
+                                localStorage.setItem('kmrl_latest_booking', JSON.stringify(verifyData.ticket));
+                                setShowJourneySummary(false);
+                                if (onNavigate) onNavigate('ticket');
+                            } else {
+                                setPaymentError(verifyData.message || 'Payment verification failed on the server.');
+                            }
+                        } catch (vErr) {
+                            setPaymentError('Verification request failed.');
+                        } finally {
+                            setIsPaying(false);
+                        }
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setIsPaying(false);
+                        }
+                    }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
             }
-
-            // Fallback to mock booking if server not available
-            const mockData = {
-                bookingId: 'MOCK-' + Date.now(),
-                fare: payload.type === 'single' ? 25 : 50,
-                ticketUrl: '/mock-api/tickets/' + Date.now() + '.pdf'
-            };
-            const bookingObj = {
-                bookingId: mockData.bookingId,
-                fare: mockData.fare,
-                ticketUrl: mockData.ticketUrl,
-                fromStation: trainToBook.fromStation || payload.fromStation,
-                toStation: trainToBook.toStation || payload.toStation,
-                passengerName: payload.passengerName,
-                email: payload.email,
-                type: payload.type,
-                date: new Date().toLocaleString(),
-                createdAt: Date.now(),
-                status: 'Success',
-                method: 'Card/UPI'
-            };
-            localStorage.setItem('kmrl_latest_booking', JSON.stringify(bookingObj));
-
-            const txns = JSON.parse(localStorage.getItem('kmrl_all_transactions') || '[]');
-            txns.push(bookingObj);
-            localStorage.setItem('kmrl_all_transactions', JSON.stringify(txns));
-
-            closeBookingModal();
-            onNavigate('ticket');
         } catch (err) {
-            console.error('Booking error:', err);
-            alert('Booking failed. Please try again.');
+            setPaymentError(err.message || 'An error occurred during ticket checkout.');
+        } finally {
+            if (paymentMethod === 'virtual_card') {
+                setIsPaying(false);
+            }
         }
     };
 
-    // Compute displayed total for modal based on ticketType
-    const computeDisplayedTotal = () => {
-        const base = Number(selectedTrain?.fare || 0);
-        if (!selectedTrain) return 0;
-        switch (ticketType) {
-            case 'single': return base;
-            case 'day-pass': return base + 50;
-            case 'weekly-pass': return 300;
-            case 'monthly-pass': return 600;
-            case 'smart-card': return 100; // card issuing price
-            default: return base;
-        }
-    };
-
-    if ((showJourneySummary || showPaymentOptions) && searchResults.length > 0) {
-        const route = searchResults[0];
-        const routeFare = route.fare || 10;
-        const activeTrain = selectedTrain || {
-            ...route,
-            fare: routeFare,
-            estimatedTime: route.estimatedTime || route.time || 15,
-            numberOfStops: route.numberOfStops || route.stops || 3
-        };
+    // ── JOURNEY REVIEW & PAYMENT SCREEN ──
+    if (showJourneySummary && selectedRoute) {
+        const totalFare = selectedRoute.fare * Number(passengers);
 
         return (
-            <div className="fm-journey-summary-page" style={{ padding: '2rem 1rem', display: 'flex', justifyContent: 'center', background: '#f4f6f8', minHeight: '80vh' }}>
-                <div className="ts-modal-container" style={{ maxWidth: '1000px', width: '100%', background: 'transparent' }}>
-                    <div className="ts-header" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center' }}>
-                        <button className="ts-close-btn" onClick={() => { setShowJourneySummary(false); setShowPaymentOptions(false); }} style={{ fontSize: '1rem', background: '#e2e8f0', padding: '0.5rem 1rem', borderRadius: '8px', color: '#334155', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                            Back to Search
+            <div className="fm-journey-summary-page" style={{ padding: '2rem 1rem', display: 'flex', justifyContent: 'center', background: '#f8fafc', minHeight: '80vh' }}>
+                <div className="ts-modal-container" style={{ maxWidth: '980px', width: '100%', background: 'transparent' }}>
+                    {/* Header */}
+                    <div className="ts-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center' }}>
+                        <button
+                            type="button"
+                            className="ts-close-btn"
+                            onClick={() => setShowJourneySummary(false)}
+                            style={{ fontSize: '0.95rem', background: '#e2e8f0', padding: '0.5rem 1rem', borderRadius: '8px', color: '#334155', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', border: 'none', fontWeight: 700 }}
+                        >
+                            ← Back to Route Alternatives
                         </button>
                     </div>
 
-                    <div className="ts-content">
-                        {/* LEFT COLUMN - Journey Details */}
+                    <div className="ts-content" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.8rem' }}>
+                        {/* LEFT COLUMN: SELECTED JOURNEY DETAILS */}
                         <div className="ts-left-col">
-                            <div className="ts-journey-card">
-                                <div className="ts-trip-status">
-                                    <span className="ts-active-text">● ACTIVE TRIP</span>
-                                    <span className="ts-dot">•</span>
-                                    <span className="ts-line-name">{activeTrain.lineName}</span>
+                            <div className="ts-journey-card" style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
+                                <div className="ts-trip-status" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                                    <span style={{ background: '#ecfdf5', color: '#047857', padding: '0.2rem 0.6rem', borderRadius: '6px', fontWeight: 800, fontSize: '0.72rem' }}>
+                                        {selectedRoute.isRecommended ? '⭐ RECOMMENDED ROUTE' : 'SELECTED JOURNEY'}
+                                    </span>
+                                    <span style={{ color: '#94a3b8' }}>•</span>
+                                    <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.85rem' }}>
+                                        {selectedRoute.transfers === 0 ? 'Direct Journey' : `${selectedRoute.transfers} Line Transfer`}
+                                    </span>
                                 </div>
 
-                                <div className="ts-route-big">
-                                    <div className="ts-station">{activeTrain.fromStation}</div>
-                                    <div className="ts-arrow">➔</div>
-                                    <div className="ts-station">{activeTrain.toStation}</div>
+                                <div className="ts-route-big" style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1rem 0' }}>
+                                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a' }}>{fromStation}</div>
+                                    <div style={{ color: '#059db2', fontSize: '1.4rem' }}>➔</div>
+                                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a' }}>{toStation}</div>
                                 </div>
 
-                                <div className="ts-time-info">
-                                    <div className="ts-time-block">
-                                        <span className="ts-time-label">Departure</span>
-                                        <span className="ts-time-val">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
-                                    </div>
-                                    <div className="ts-time-block">
-                                        <span className="ts-time-label">Expected Arrival</span>
-                                        <span className="ts-time-val">{new Date(Date.now() + (activeTrain.estimatedTime || 15) * 60000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="ts-middle-cards">
-                                <div className="ts-traveler-card">
-                                    <div className="ts-traveler-icon">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                    </div>
-                                    <div className="ts-traveler-info">
-                                        <label>Traveler Detail</label>
-                                        <input
-                                            type="text"
-                                            className="ts-name-input"
-                                            value={user?.fullName || 'John Doe'}
-                                            readOnly
-                                            placeholder="Enter your name"
-                                        />
-                                        <div className="ts-passenger-id">ID: {user?.id || 'Pass-X91A1'}</div>
-                                    </div>
+                                {/* Multi-Line badges */}
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', margin: '0.8rem 0' }}>
+                                    {selectedRoute.lines.map((l, i) => (
+                                        <React.Fragment key={l.id}>
+                                            <span style={{ background: l.color, color: '#fff', padding: '0.25rem 0.65rem', borderRadius: '6px', fontWeight: 800, fontSize: '0.78rem' }}>
+                                                {l.name}
+                                            </span>
+                                            {i < selectedRoute.lines.length - 1 && (
+                                                <span style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, alignSelf: 'center' }}>
+                                                    ➔ Switch at {selectedRoute.interchanges[i]} ➔
+                                                </span>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
                                 </div>
 
-                                <div className="ts-tickets-card">
-                                    <div className="ts-tickets-label">Number of Tickets</div>
-                                    <div className="ts-counter-row">
-                                        <div className="ts-counter">
-                                            <button className="ts-counter-btn" onClick={() => setPassengers(p => Math.max(1, Number(p) - 1))}>−</button>
-                                            <span className="ts-count-val">{passengers}</span>
-                                            <button className="ts-counter-btn" onClick={() => setPassengers(p => Math.min(6, Number(p) + 1))}>+</button>
+                                {/* Step by step segments */}
+                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', border: '1px solid #e2e8f0', marginTop: '1rem', fontSize: '0.82rem', lineHeight: 1.6 }}>
+                                    {selectedRoute.segments.map((seg, idx) => (
+                                        <div key={idx} style={{ marginBottom: idx < selectedRoute.segments.length - 1 ? '0.8rem' : 0 }}>
+                                            <div style={{ fontWeight: 800, color: seg.lineColor }}>
+                                                Step {idx + 1}: Board {seg.lineName} at {seg.boardAt}
+                                            </div>
+                                            <div style={{ color: '#64748b', marginLeft: '0.8rem' }}>
+                                                Towards {seg.directionTowards} • {seg.stopsCount} stops • Exit at {seg.alightAt}
+                                            </div>
+                                            {seg.transferInstruction && (
+                                                <div style={{ background: '#f0fdfa', border: '1px solid #99f6e4', padding: '0.3rem 0.6rem', borderRadius: '6px', color: '#0f766e', fontWeight: 700, margin: '4px 0 4px 0.8rem' }}>
+                                                    🔄 {seg.transferInstruction}
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="ts-unit-price">
-                                            <div className="ts-price-label">Base Fare</div>
-                                            <div className="ts-price-val">₹{routeFare}</div>
-                                        </div>
-                                    </div>
+                                    ))}
+                                </div>
+
+                                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: '0.8rem' }}>
+                                    <span>Total Stops: <strong>{selectedRoute.totalStops}</strong></span>
+                                    <span>Est. Travel Time: <strong>~{selectedRoute.estimatedMinutes} mins</strong></span>
+                                    <span>Validity: <strong>Strictly 5 Hours</strong></span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* RIGHT COLUMN - Payments */}
+                        {/* RIGHT COLUMN: PASSENGERS & PAYMENT CHOICE */}
                         <div className="ts-right-col">
-                            <div className="ts-payment-card">
-                                <h3 className="ts-payment-title">Payment Method</h3>
+                            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
+                                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 1rem 0', color: '#0f172a' }}>
+                                    Review & Payment
+                                </h3>
 
-                                <div className="ts-payment-options">
-                                    <div className={`ts-pm-option ${ticketType === 'card' ? 'active' : ''}`} onClick={() => setTicketType('card')}>
-                                        <div className="ts-radio">
-                                            <div className="ts-radio-inner"></div>
-                                        </div>
-                                        <div className="ts-pm-icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                                        </div>
-                                        <span className="ts-pm-name">Credit/Debit Card</span>
+                                {/* Passenger Counter */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', padding: '0.8rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
+                                    <div>
+                                        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155' }}>Passengers</div>
+                                        <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Base fare: ₹{selectedRoute.fare} / passenger</div>
                                     </div>
-
-                                    <div className={`ts-pm-option ${ticketType === 'wallet' ? 'active' : ''}`} onClick={() => setTicketType('wallet')}>
-                                        <div className="ts-radio">
-                                            <div className="ts-radio-inner"></div>
-                                        </div>
-                                        <div className="ts-pm-icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                                        </div>
-                                        <span className="ts-pm-name">Digital Wallet</span>
-                                    </div>
-
-                                    <div className={`ts-pm-option ${ticketType === 'upi' ? 'active' : ''}`} onClick={() => setTicketType('upi')}>
-                                        <div className="ts-radio">
-                                            <div className="ts-radio-inner"></div>
-                                        </div>
-                                        <div className="ts-pm-icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect><rect x="14" y="14" width="3" height="3"></rect></svg>
-                                        </div>
-                                        <span className="ts-pm-name">UPI / QR Pay</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                        <button
+                                            type="button"
+                                            aria-label="Decrease passenger count"
+                                            onClick={() => setPassengers(p => Math.max(1, p - 1))}
+                                            disabled={passengers <= 1}
+                                            style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                borderRadius: '8px',
+                                                border: '1.5px solid #cbd5e1',
+                                                background: passengers <= 1 ? '#f1f5f9' : '#ffffff',
+                                                color: passengers <= 1 ? '#94a3b8' : '#0f172a',
+                                                cursor: passengers <= 1 ? 'not-allowed' : 'pointer',
+                                                fontSize: '1.2rem',
+                                                fontWeight: 800,
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: 0,
+                                                lineHeight: 1,
+                                                transition: 'all 0.15s ease',
+                                                userSelect: 'none',
+                                                boxShadow: passengers <= 1 ? 'none' : '0 1px 3px rgba(0,0,0,0.08)'
+                                            }}
+                                        >
+                                            −
+                                        </button>
+                                        <span style={{ fontWeight: 800, fontSize: '1.05rem', minWidth: '28px', textAlign: 'center', color: '#0f172a' }}>
+                                            {passengers}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            aria-label="Increase passenger count"
+                                            onClick={() => setPassengers(p => Math.min(6, p + 1))}
+                                            disabled={passengers >= 6}
+                                            style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                borderRadius: '8px',
+                                                border: '1.5px solid #cbd5e1',
+                                                background: passengers >= 6 ? '#f1f5f9' : '#ffffff',
+                                                color: passengers >= 6 ? '#94a3b8' : '#0f172a',
+                                                cursor: passengers >= 6 ? 'not-allowed' : 'pointer',
+                                                fontSize: '1.2rem',
+                                                fontWeight: 800,
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: 0,
+                                                lineHeight: 1,
+                                                transition: 'all 0.15s ease',
+                                                userSelect: 'none',
+                                                boxShadow: passengers >= 6 ? 'none' : '0 1px 3px rgba(0,0,0,0.08)'
+                                            }}
+                                        >
+                                            +
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="ts-summary-totals">
-                                    <div className="ts-total-row">
-                                        <span>Subtotal</span>
-                                        <span>₹{routeFare * Number(passengers)}</span>
+                                {/* Payment Method Choice */}
+                                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '0.5rem' }}>
+                                    Select Payment Method
+                                </label>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.2rem' }}>
+                                    <div
+                                        onClick={() => setPaymentMethod('razorpay')}
+                                        style={{
+                                            padding: '0.8rem',
+                                            borderRadius: '10px',
+                                            border: paymentMethod === 'razorpay' ? '2px solid #059db2' : '1px solid #cbd5e1',
+                                            background: paymentMethod === 'razorpay' ? '#ecfeff' : '#ffffff',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>💳</span>
+                                            <div>
+                                                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Razorpay Payment</div>
+                                                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>UPI, Cards, NetBanking (Official Test Mode)</div>
+                                            </div>
+                                        </div>
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #059db2', background: paymentMethod === 'razorpay' ? '#059db2' : '#fff' }} />
                                     </div>
-                                    <div className="ts-total-row">
-                                        <span>Booking Fee</span>
-                                        <span>₹0</span>
-                                    </div>
-                                    <div className="ts-total-row ts-grand-total">
-                                        <span>Grand Total</span>
-                                        <span className="ts-grand-val">₹{routeFare * Number(passengers)}</span>
+
+                                    <div
+                                        onClick={() => setPaymentMethod('virtual_card')}
+                                        style={{
+                                            padding: '0.8rem',
+                                            borderRadius: '10px',
+                                            border: paymentMethod === 'virtual_card' ? '2px solid #059db2' : '1px solid #cbd5e1',
+                                            background: paymentMethod === 'virtual_card' ? '#ecfeff' : '#ffffff',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                                            <div>
+                                                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>Virtual Metro Card Wallet</div>
+                                                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Instant debit from your stored-value card</div>
+                                            </div>
+                                        </div>
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #059db2', background: paymentMethod === 'virtual_card' ? '#059db2' : '#fff' }} />
                                     </div>
                                 </div>
 
-                                <button className="ts-pay-btn" disabled={isPaying || loading} style={{ position: 'relative' }} onClick={async () => {
-                                    if (!user) {
-                                        alert("Please sign in to proceed with booking.");
-                                        onNavigate("signin");
-                                        return;
-                                    }
-                                    setIsPaying(true);
+                                {paymentError && (
+                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', padding: '0.75rem', borderRadius: '8px', color: '#b91c1c', fontSize: '0.82rem', fontWeight: 600, marginBottom: '1rem' }}>
+                                        ⚠️ {paymentError}
+                                    </div>
+                                )}
 
-                                    // Random delay between 4000ms and 6000ms
-                                    const delay = Math.floor(Math.random() * 2000) + 4000;
-                                    await new Promise(res => setTimeout(res, delay));
+                                {/* Total and Pay Button */}
+                                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', marginBottom: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 700 }}>Total Amount:</span>
+                                    <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a' }}>₹{totalFare}</span>
+                                </div>
 
-                                    try {
-                                        await submitBooking(activeTrain);
-                                    } finally {
-                                        setIsPaying(false);
-                                    }
-                                }}>
-                                    {isPaying ? 'Processing Payment...' : `Pay ₹${routeFare * Number(passengers)}`}
+                                <button
+                                    type="button"
+                                    onClick={handleCompletePaymentAndIssueTicket}
+                                    disabled={isPaying}
+                                    style={{
+                                        width: '100%',
+                                        background: 'linear-gradient(135deg, #059db2 0%, #0d9488 100%)',
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        padding: '0.95rem',
+                                        borderRadius: '10px',
+                                        fontWeight: 800,
+                                        fontSize: '1rem',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 4px 14px rgba(5, 157, 178, 0.35)'
+                                    }}
+                                >
+                                    {isPaying ? 'Processing Payment...' : `Pay ₹${totalFare} & Generate 5-Hour QR Pass`}
                                 </button>
-                                <div className="ts-secure-text">🔒 256-bit SSL Secured Payment</div>
-                            </div>
 
-                            <div className="ts-help-card">
-                                <div className="ts-help-icon">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                                </div>
-                                <div className="ts-help-text">
-                                    <strong>Need Help?</strong>
-                                    <p>Contact 24/7 customer support for payment issues or delays.</p>
+                                <div style={{ textAlign: 'center', marginTop: '0.8rem', fontSize: '0.72rem', color: '#94a3b8' }}>
+                                    🔒 Server-verified ticket • 5-Hour Validity Window from Issuance
                                 </div>
                             </div>
                         </div>
@@ -641,17 +600,17 @@ function FindMetro({ onNavigate, user, onLogout }) {
 
     return (
         <div className="findmetro-container">
-            {/* New Unified Hero Banner */}
+            {/* Unified Hero Banner */}
             <div className="fm-hero-wrapper">
                 <img src="/images/p1.png" alt="Metro Illustration Left" className="fm-hero-img-left" />
                 <div className="fm-hero-center">
                     <h1>Plan Your Trip & Network Map</h1>
-                    <p>Welcome to the comprehensive hub for exploring Kochi Metro routes, tracking live trains, and finding fast and smart connections across the city.</p>
+                    <p>Explore Kochi Metro multi-line connections, calculate transfers, and book 5-hour digital QR tickets seamlessly.</p>
                 </div>
                 <img src="/images/p2.png" alt="Metro Illustration Right" className="fm-hero-img-right" />
             </div>
 
-            {/* Live Trains Marquee */}
+            {/* Live Trains Ticker */}
             <div className="fm-live-updates-bar">
                 <span className="live-label">LIVE TRAINS</span>
                 <div className="live-ticker-wrap">
@@ -667,32 +626,28 @@ function FindMetro({ onNavigate, user, onLogout }) {
                                 </div>
                             ))
                         ) : (
-                            <div className="live-item-badge">No active live train updates right now.</div>
+                            <div className="live-item-badge">All Kochi Metro trains operating on schedule.</div>
                         )}
                     </div>
                 </div>
             </div>
 
+            {/* Main Layout */}
             <div className="fm-main-layout">
-                {/* Left Column: Plan Your Trip Form & Services */}
+                {/* Left Column: Route Planner Form */}
                 <div className="fm-left-column">
                     <div className="tp-card-container">
                         <div className="tp-header">
                             <h2>PLAN YOUR JOURNEY</h2>
                         </div>
                         <div className="tp-body">
-                            <div className="tp-toggle-group">
-                                <button type="button" className="tp-toggle-btn active">
-                                    <span style={{ fontSize: '1.2rem', marginRight: '4px' }}>➔</span> One way
-                                </button>
-                            </div>
-
                             <form onSubmit={handleSearch} className="tp-form">
-                                <p className="tp-select-label">Select locality or station</p>
+                                <p className="tp-select-label">Select departing and arriving stations</p>
 
                                 {errors.submit && <div className="error-message" style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '10px' }}>{errors.submit}</div>}
 
                                 <div className="tp-inputs-wrapper">
+                                    {/* From Station */}
                                     <div className="tp-input-group" ref={fromDropdownRef}>
                                         <label htmlFor="fromStation">From</label>
                                         <input
@@ -702,27 +657,27 @@ function FindMetro({ onNavigate, user, onLogout }) {
                                             onChange={(e) => handleSelectChange('from', e.target.value)}
                                             onFocus={() => {
                                                 setShowFromDropdown(true);
-                                                if (fromStation.trim() === '') setFromSuggestions(allStations);
+                                                setFromSuggestions(allStations);
                                             }}
-                                            placeholder="Search From Locality or Station"
+                                            placeholder="Search departure station..."
                                             autoComplete="off"
                                         />
                                         {showFromDropdown && fromSuggestions.length > 0 && (
                                             <div className="dropdown-list" onMouseDown={(e) => e.preventDefault()}>
-                                                {fromSuggestions.map((station, idx) => (
-                                                    <div key={idx} className="dropdown-item" onClick={() => selectFromStation(station)}>
+                                                {fromSuggestions.map((st, idx) => (
+                                                    <div key={idx} className="dropdown-item" onClick={() => selectFromStation(st)}>
                                                         <div className="station-info">
-                                                            <strong>{station.name}</strong>
-                                                            <span className="station-code">{station.code}</span>
+                                                            <strong>{st.name}</strong>
+                                                            <span className="station-code">{st.code}</span>
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
-                                        {errors.fromStation && <span className="error-text" style={{ color: '#ef4444', fontSize: '0.75rem', position: 'absolute', bottom: '-18px' }}>{errors.fromStation}</span>}
+                                        {errors.fromStation && <span className="error-text" style={{ color: '#ef4444', fontSize: '0.75rem' }}>{errors.fromStation}</span>}
                                     </div>
 
-                                    {/* Elegant Swap Button */}
+                                    {/* Swap Button */}
                                     <div className="tp-swap-btn" style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 30 }}>
                                         <button
                                             type="button"
@@ -738,25 +693,17 @@ function FindMetro({ onNavigate, user, onLogout }) {
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 cursor: 'pointer',
-                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                                                color: '#0ea5e9',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.currentTarget.style.transform = 'rotate(180deg)';
-                                                e.currentTarget.style.background = '#f0f9ff';
-                                                e.currentTarget.style.borderColor = '#bae6fd';
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.currentTarget.style.transform = 'rotate(0deg)';
-                                                e.currentTarget.style.background = '#ffffff';
-                                                e.currentTarget.style.borderColor = '#e2e8f0';
+                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                                                color: '#059db2',
+                                                fontSize: '1.2rem',
+                                                fontWeight: 'bold'
                                             }}
                                         >
-                                            <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>⇅</span>
+                                            ⇅
                                         </button>
                                     </div>
 
+                                    {/* To Station */}
                                     <div className="tp-input-group" ref={toDropdownRef}>
                                         <label htmlFor="toStation">To</label>
                                         <input
@@ -766,150 +713,207 @@ function FindMetro({ onNavigate, user, onLogout }) {
                                             onChange={(e) => handleSelectChange('to', e.target.value)}
                                             onFocus={() => {
                                                 setShowToDropdown(true);
-                                                if (toStation.trim() === '') setToSuggestions(allStations);
+                                                setToSuggestions(allStations);
                                             }}
-                                            placeholder="Search To Locality or Station"
+                                            placeholder="Search arrival station..."
                                             autoComplete="off"
                                         />
                                         {showToDropdown && toSuggestions.length > 0 && (
                                             <div className="dropdown-list" onMouseDown={(e) => e.preventDefault()}>
-                                                {toSuggestions.map((station, idx) => (
-                                                    <div key={idx} className="dropdown-item" onClick={() => selectToStation(station)}>
+                                                {toSuggestions.map((st, idx) => (
+                                                    <div key={idx} className="dropdown-item" onClick={() => selectToStation(st)}>
                                                         <div className="station-info">
-                                                            <strong>{station.name}</strong>
-                                                            <span className="station-code">{station.code}</span>
+                                                            <strong>{st.name}</strong>
+                                                            <span className="station-code">{st.code}</span>
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
-                                        {errors.toStation && <span className="error-text" style={{ color: '#ef4444', fontSize: '0.75rem', position: 'absolute', bottom: '-18px' }}>{errors.toStation}</span>}
+                                        {errors.toStation && <span className="error-text" style={{ color: '#ef4444', fontSize: '0.75rem' }}>{errors.toStation}</span>}
                                     </div>
                                 </div>
 
                                 <div className="tp-actions">
-                                    <button type="button" className="tp-reset-btn" onClick={() => {
-                                        setFromStation('');
-                                        setToStation('');
-                                        setErrors({});
-                                    }}>
-                                        <span style={{ fontSize: '1.2rem' }}>↻</span> RESET
-                                    </button>
-                                    <button type="submit" className="tp-submit-btn" disabled={loading} onClick={(e) => {
-                                        if (!user) {
-                                            e.preventDefault();
-                                            alert("Please sign in to plan a journey.");
-                                            onNavigate("signin");
-                                        }
-                                    }}>
-                                        {loading ? 'Searching...' : (!user ? 'SIGN IN TO PLAN' : 'PLAN JOURNEY')}
+                                    <button type="submit" className="tp-submit-btn" disabled={loading} style={{ width: '100%' }}>
+                                        {loading ? 'Calculating Routes...' : 'PLAN JOURNEY & SHOW ROUTES'}
                                     </button>
                                 </div>
                             </form>
-                            <img src="/images/footer1.png" alt="City Skyline" className="tp-footer-img" />
                         </div>
                     </div>
 
-                    {/* Integrated Station Services */}
-                    <div className="station-services-panel">
-                        <div className="card-header">🛎️ Check Station Facilities</div>
-                        <div className="card-body">
-                            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.9rem', color: '#666' }}>Select any station to explore its available services</label>
-                            <select value={selectedStation?.name || ''} onChange={(e) => {
-                                const name = e.target.value;
-                                const st = allStations.find(s => s.name === name);
-                                setSelectedStation(st || null);
-                            }} className="services-select">
-                                <option value="">-- Choose a station --</option>
-                                {allStations.map((s, idx) => (
-                                    <option key={idx} value={s.name}>{s.name} ({s.code})</option>
-                                ))}
-                            </select>
+                    {/* Route Alternatives Selection Panel */}
+                    {candidateRoutes.length > 0 && (
+                        <div ref={resultsRef} style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                                    Available Route Alternatives ({candidateRoutes.length})
+                                </h3>
+                                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Select preferred route to review & book</span>
+                            </div>
 
-                            {selectedStation ? (
-                                <div className="services-preview">
-                                    <h4 style={{ margin: '0 0 0.5rem 0', color: '#0d9488' }}>{selectedStation.name}</h4>
-                                    <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>Line: <strong style={{ color: '#333' }}>{selectedStation.lineName || '—'}</strong></p>
-                                    <div className="facilities-grid-mini">
-                                        <span className="fm-tag">🏧 ATM</span>
-                                        <span className="fm-tag">🍔 Food Court</span>
-                                        <span className="fm-tag">📶 WiFi</span>
-                                        <span className="fm-tag">💬 Help Desk</span>
-                                        <span className="fm-tag">🅿️ Parking</span>
+                            {candidateRoutes.map((route, idx) => {
+                                const isSelected = selectedRoute?.routeId === route.routeId;
+                                return (
+                                    <div
+                                        key={route.routeId}
+                                        onClick={() => handleSelectRouteCard(route)}
+                                        style={{
+                                            background: '#ffffff',
+                                            borderRadius: '14px',
+                                            border: isSelected ? '2px solid #059db2' : '1px solid #e2e8f0',
+                                            padding: '1.2rem',
+                                            boxShadow: isSelected ? '0 4px 18px rgba(5, 157, 178, 0.18)' : '0 2px 6px rgba(0,0,0,0.04)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                <span style={{
+                                                    background: route.isRecommended ? '#ecfdf5' : '#f1f5f9',
+                                                    color: route.isRecommended ? '#047857' : '#475569',
+                                                    fontSize: '0.72rem',
+                                                    fontWeight: 800,
+                                                    padding: '0.2rem 0.55rem',
+                                                    borderRadius: '6px'
+                                                }}>
+                                                    {route.isRecommended ? '⭐ RECOMMENDED' : `ALTERNATIVE ${idx + 1}`}
+                                                </span>
+                                                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a' }}>
+                                                    {route.name}
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#059db2' }}>
+                                                ₹{route.fare}
+                                            </div>
+                                        </div>
+
+                                        {/* Line Badges */}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', margin: '0.5rem 0' }}>
+                                            {route.lines.map((l, lIdx) => (
+                                                <React.Fragment key={l.id}>
+                                                    <span style={{ background: l.color, color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
+                                                        {l.name}
+                                                    </span>
+                                                    {lIdx < route.lines.length - 1 && (
+                                                        <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>
+                                                            ➔ Switch at {route.interchanges[lIdx]} ➔
+                                                        </span>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+
+                                        <div style={{ fontSize: '0.78rem', color: '#64748b', margin: '0.4rem 0' }}>
+                                            {route.transfers === 0 ? 'Direct ride' : `${route.transfers} transfer`} • {route.totalStops} stops • Duration: ~{route.estimatedMinutes} mins
+                                        </div>
+
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.8rem', borderTop: '1px solid #f1f5f9', paddingTop: '0.6rem' }}>
+                                            <span style={{ fontSize: '0.75rem', color: '#059db2', fontWeight: 700 }}>
+                                                {isSelected ? '✓ Currently Selected & Mapped' : 'Click to preview on map'}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleProceedToReview(route);
+                                                }}
+                                                style={{
+                                                    background: '#059db2',
+                                                    color: '#ffffff',
+                                                    border: 'none',
+                                                    padding: '0.4rem 0.9rem',
+                                                    borderRadius: '6px',
+                                                    fontWeight: 800,
+                                                    fontSize: '0.8rem',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Select & Review Journey →
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <p style={{ fontSize: '0.9rem', color: '#888', fontStyle: 'italic', marginTop: '1rem' }}>No station selected. Choose one to see amenities like ATM, WiFi, etc.</p>
-                            )}
+                                );
+                            })}
                         </div>
-                    </div>
+                    )}
                 </div>
 
-                {/* Right Column: Network Map and Line Controls */}
+                {/* Right Column: DMRC-Inspired Multi-Line Schematic Map */}
                 <div className="fm-right-column">
-                    <div className="fm-map-header">
-                        <h2>Interactive Network Map</h2>
-                        <div className="lines-pills">
+                    <div className="fm-map-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <h2 style={{ margin: 0 }}>Kochi Metro Transit Network</h2>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+                                Click stations to set route • DMRC-inspired schematic topology
+                            </p>
+                        </div>
+
+                        {/* View Switcher: Schematic vs GIS Leaflet */}
+                        <div style={{ display: 'flex', gap: '4px', background: '#e2e8f0', padding: '3px', borderRadius: '8px' }}>
                             <button
-                                className={`line-pill ${selectedLine === null ? 'active' : ''}`}
-                                onClick={() => setSelectedLine(null)}
-                                style={{ '--pill-color': '#64748b' }}
+                                type="button"
+                                onClick={() => setMapViewMode('schematic')}
+                                style={{
+                                    border: 'none',
+                                    background: mapViewMode === 'schematic' ? '#ffffff' : 'transparent',
+                                    color: mapViewMode === 'schematic' ? '#0f172a' : '#64748b',
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
+                                    padding: '0.35rem 0.7rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer'
+                                }}
                             >
-                                All Lines
+                                Schematic network
                             </button>
-                            {metroLinesData.map(line => (
-                                <button
-                                    key={line.id}
-                                    className={`line-pill ${selectedLine === line.id ? 'active' : ''}`}
-                                    onClick={() => { setSelectedLine(line.id); setHighlightedRoute(null); }}
-                                    style={{ '--pill-color': line.color || '#0d9488' }}
-                                >
-                                    {line.name}
-                                </button>
-                            ))}
+                            <button
+                                type="button"
+                                onClick={() => setMapViewMode('gis')}
+                                style={{
+                                    border: 'none',
+                                    background: mapViewMode === 'gis' ? '#ffffff' : 'transparent',
+                                    color: mapViewMode === 'gis' ? '#0f172a' : '#64748b',
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
+                                    padding: '0.35rem 0.7rem',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Geographic GIS
+                            </button>
                         </div>
                     </div>
 
-                    <div className="fm-map-wrapper">
-                        <MapMetro
-                            height="100%"
-                            selectedLineId={selectedLine}
-                            highlightedRoute={highlightedRoute}
-                            onStationClick={handleMapStationClick}
-                        />
+                    <div className="fm-map-wrapper" style={{ minHeight: '560px', height: '100%' }}>
+                        {mapViewMode === 'schematic' ? (
+                            <SchematicMetroMap
+                                highlightedRoute={highlightedRouteStations}
+                                onStationClick={(st) => {
+                                    if (!fromStation) {
+                                        setFromStation(st.name);
+                                    } else if (!toStation || toStation === fromStation) {
+                                        setToStation(st.name);
+                                    } else {
+                                        setFromStation(st.name);
+                                    }
+                                }}
+                                selectedStation={selectedStation?.name}
+                            />
+                        ) : (
+                            <MapMetro
+                                height="100%"
+                                selectedLineId={selectedLine}
+                                highlightedRoute={null}
+                                onStationClick={(st) => setSelectedStation(st)}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
-
-            {/* Payment Processing Overlay */}
-            {isPaying && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)',
-                    zIndex: 9999, display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center', color: 'white'
-                }}>
-                    <style>
-                        {`
-                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-                        `}
-                    </style>
-                    <div style={{
-                        width: '64px', height: '64px', borderRadius: '50%',
-                        border: '4px solid rgba(255,255,255,0.1)',
-                        borderTopColor: '#0ea5e9',
-                        animation: 'spin 1s linear infinite',
-                        marginBottom: '1.5rem'
-                    }} />
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
-                        Processing Payment
-                    </h2>
-                    <p style={{ color: '#cbd5e1', fontSize: '0.9rem' }}>
-                        Please wait while we confirm your transaction securely. Do not close or refresh this page.
-                    </p>
-                </div>
-            )}
         </div>
     );
 }

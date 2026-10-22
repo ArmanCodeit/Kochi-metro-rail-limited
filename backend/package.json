@@ -19,6 +19,7 @@
     "nodemailer": "^6.9.5",
     "pdfkit": "^0.13.0",
     "qrcode": "^1.5.4",
+    "razorpay": "^2.9.8",
     "stripe": "^20.4.0",
     "uuid": "^9.0.0"
   },

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/Recharge.css';
-
-// User should place metrocard.png in the assets folder or use public path
-// import metroCardImg from '../../assets/metrocard.png';
+import VirtualMetroCard from '../components/VirtualCard/VirtualMetroCard';
+import RechargeModal from '../components/VirtualCard/RechargeModal';
+import CardActivitySection from '../components/VirtualCard/CardActivitySection';
 
 const stationBadges = [
     { name: "Aluva", color: "#0ea5e9" },
@@ -19,6 +19,88 @@ const stationBadges = [
 ];
 
 const Recharge = ({ onNavigate }) => {
+    const [token, setToken] = useState(() => localStorage.getItem('kmrl_token'));
+    const [card, setCard] = useState(null);
+    const [cardLoading, setCardLoading] = useState(false);
+    const [isRechargeModalOpen, setIsRechargeModalOpen] = useState(false);
+    const [authPrompt, setAuthPrompt] = useState(false);
+
+    const isAuthenticated = !!token;
+
+    // Fetch or auto-provision virtual card for authenticated user
+    const fetchCard = useCallback(async () => {
+        const currentToken = localStorage.getItem('kmrl_token');
+        if (!currentToken) {
+            setCard(null);
+            return;
+        }
+
+        setCardLoading(true);
+        try {
+            const response = await fetch('/api/card', {
+                headers: {
+                    'Authorization': `Bearer ${currentToken}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setCard(data);
+            } else if (response.status === 401) {
+                // Token expired
+                localStorage.removeItem('kmrl_token');
+                localStorage.removeItem('kmrl_user');
+                setToken(null);
+                setCard(null);
+            }
+        } catch (error) {
+            console.error('Failed to load virtual metro card:', error);
+        } finally {
+            setCardLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchCard();
+    }, [fetchCard]);
+
+    // Handle "RECHARGE YOUR CARD" button click
+    const handleRechargeButtonClick = () => {
+        const currentToken = localStorage.getItem('kmrl_token');
+        if (!currentToken) {
+            setAuthPrompt(true);
+            setTimeout(() => setAuthPrompt(false), 5000);
+            return;
+        }
+        setIsRechargeModalOpen(true);
+    };
+
+    // Callback when recharge completes successfully
+    const handleRechargeSuccess = (newBalance) => {
+        if (typeof newBalance === 'number') {
+            setCard(prev => prev ? { ...prev, balance: newBalance } : null);
+        } else {
+            fetchCard();
+        }
+    };
+
+    // Callback when journey simulation deducts fare
+    const handleCardUpdated = (newBalance) => {
+        if (typeof newBalance === 'number') {
+            setCard(prev => prev ? { ...prev, balance: newBalance } : null);
+        } else {
+            fetchCard();
+        }
+    };
+
+    const handleUserGuideClick = () => {
+        if (typeof onNavigate === 'function') {
+            onNavigate('userguide');
+        } else {
+            window.location.assign('/user-guide');
+        }
+    };
+
     return (
         <div className="recharge-page-container">
             {/* Hero Section */}
@@ -29,18 +111,80 @@ const Recharge = ({ onNavigate }) => {
                         With Kochi1 Card on Kochi Metro, your <br /> journey just got smarter!
                     </p>
                     <div className="hero-buttons">
-                        <button className="btn-recharge">RECHARGE YOUR CARD</button>
-                        <button className="btn-user-guide">USER GUIDE</button>
+                        <button
+                            type="button"
+                            className="btn-recharge"
+                            onClick={handleRechargeButtonClick}
+                            id="btn-hero-recharge"
+                        >
+                            RECHARGE YOUR CARD
+                        </button>
+                        <button
+                            type="button"
+                            className="btn-user-guide"
+                            onClick={handleUserGuideClick}
+                        >
+                            USER GUIDE
+                        </button>
                     </div>
+
+                    {authPrompt && (
+                        <div style={{
+                            marginTop: '1.2rem',
+                            padding: '0.8rem 1rem',
+                            background: '#fef3c7',
+                            border: '1px solid #fde68a',
+                            borderRadius: '10px',
+                            color: '#92400e',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '0.8rem'
+                        }}>
+                            <span>🔒 Please sign in to your account to recharge your card.</span>
+                            <button
+                                type="button"
+                                onClick={() => onNavigate ? onNavigate('signin') : window.location.assign('/signin')}
+                                style={{
+                                    background: '#059db2',
+                                    color: '#fff',
+                                    border: 'none',
+                                    padding: '0.35rem 0.75rem',
+                                    borderRadius: '6px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem'
+                                }}
+                            >
+                                Sign In
+                            </button>
+                        </div>
+                    )}
                 </div>
+
+                {/* Hero Image Container: Interactive Virtual Kochi Metro Card */}
                 <div className="hero-image-container">
-                    {/* User will add metrocard.png */}
-                    <img src="/images/metrocard.png" alt="Metro Card" className="metro-card-img" onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://via.placeholder.com/600x400?text=Metro+Card+Image+Here"; // placeholder fallback
-                    }} />
+                    <VirtualMetroCard
+                        card={card}
+                        loading={cardLoading}
+                        onRefresh={fetchCard}
+                        isAuthenticated={isAuthenticated}
+                        onRechargeClick={handleRechargeButtonClick}
+                    />
                 </div>
             </section>
+
+            {/* Simulated Metro Journey & Transaction History Section */}
+            <CardActivitySection
+                card={card}
+                token={token}
+                onCardUpdated={handleCardUpdated}
+                onOpenRecharge={handleRechargeButtonClick}
+                isAuthenticated={isAuthenticated}
+                onNavigate={onNavigate}
+            />
 
             {/* Stations Banner */}
             <section className="stations-banner">
@@ -71,28 +215,28 @@ const Recharge = ({ onNavigate }) => {
                 <div className="glance-grid">
                     <div className="glance-card">
                         <div className="glance-icon-placeholder">
-                            {<img src="/images/gate1.png" alt="" />}
+                            <img src="/images/gate1.png" alt="" />
                         </div>
                         <h4>Contactless Entry<br /> at All Stations</h4>
                         <p>The Kochi1 Card enables contactless entry at all Kochi Metro stations</p>
                     </div>
                     <div className="glance-card">
                         <div className="glance-icon-placeholder">
-                            {<img src="/images/glance.png" alt="" />}
+                            <img src="/images/glance.png" alt="" />
                         </div>
                         <h4>One Card for All<br /> Metro Lines</h4>
                         <p>The same card can also be used across Kochi Water Metro and feeder buses.</p>
                     </div>
                     <div className="glance-card">
                         <div className="glance-icon-placeholder">
-                            {<img src="/images/card.png" alt="" />}
+                            <img src="/images/card.png" alt="" />
                         </div>
                         <h4>Ride Easy with<br /> Kochi1 at KMRL</h4>
                         <p>Kochi1 cards issued by our partner banks are also compatible and rechargeable at all metro stations.</p>
                     </div>
                     <div className="glance-card">
                         <div className="glance-icon-placeholder">
-                            {<img src="/images/bus.png" alt="" />}
+                            <img src="/images/bus.png" alt="" />
                         </div>
                         <h4>Key To Best Public Transport<br /> Anywhere you go.</h4>
                         <p>Single card across multiple transit systems, including buses, water metros, and other networks.</p>
@@ -122,28 +266,28 @@ const Recharge = ({ onNavigate }) => {
                     <div className="ht-steps">
                         <div className="ht-step">
                             <div className="ht-step-circle">
-                                {<img src="/images/step1.png" alt="" />}
+                                <img src="/images/step1.png" alt="" />
                             </div>
                             <p>Recharge your card using any app.</p>
                         </div>
                         <div className="ht-step-arrow">→</div>
                         <div className="ht-step">
                             <div className="ht-step-circle">
-                                {<img src="/images/step2.png" alt="" />}
+                                <img src="/images/step2.png" alt="" />
                             </div>
                             <p>Go to any metro ticket counter with your card</p>
                         </div>
                         <div className="ht-step-arrow">→</div>
                         <div className="ht-step">
                             <div className="ht-step-circle">
-                                {<img src="/images/step3.png" alt="" />}
+                                <img src="/images/step3.png" alt="" />
                             </div>
                             <p>Load your card balance by tapping at TOM and EFO counters at the listed stations.</p>
                         </div>
                         <div className="ht-step-arrow">→</div>
                         <div className="ht-step">
                             <div className="ht-step-circle">
-                                {<img src="/images/step4.png" alt="" />}
+                                <img src="/images/step4.png" alt="" />
                             </div>
                             <p>It's done! Travel without hassles.</p>
                         </div>
@@ -151,6 +295,14 @@ const Recharge = ({ onNavigate }) => {
                 </div>
             </section>
 
+            {/* Recharge Modal */}
+            <RechargeModal
+                isOpen={isRechargeModalOpen}
+                onClose={() => setIsRechargeModalOpen(false)}
+                card={card}
+                token={token}
+                onSuccess={handleRechargeSuccess}
+            />
         </div>
     );
 };

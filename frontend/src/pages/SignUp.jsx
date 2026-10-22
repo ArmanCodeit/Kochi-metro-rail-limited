@@ -1,6 +1,81 @@
 import React, { useState } from 'react';
-import '@fontsource/caudex';
 import '../styles/SignUp.css';
+
+// Crisp inline SVGs
+const EyeIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+);
+
+const EyeOffIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+        <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+);
+
+const AlertIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+);
+
+const ArrowLeftIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+    </svg>
+);
+
+const CheckIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
+const CircleIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+    </svg>
+);
+
+const ChevronDownIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+    </svg>
+);
+
+const TicketIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z" />
+        <path d="M13 5v2" /><path d="M13 11v2" /><path d="M13 17v2" />
+    </svg>
+);
+
+const CardIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="3" ry="3" />
+        <line x1="1" y1="10" x2="23" y2="10" />
+    </svg>
+);
+
+const MapIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+        <line x1="8" y1="2" x2="8" y2="18" />
+        <line x1="16" y1="6" x2="16" y2="22" />
+    </svg>
+);
+
+const ShieldIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+);
 
 function SignUp({ onNavigate }) {
     const [formData, setFormData] = useState({
@@ -19,6 +94,8 @@ function SignUp({ onNavigate }) {
     const [errors, setErrors] = useState({});
     const [passwordStrength, setPasswordStrength] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,6 +113,7 @@ function SignUp({ onNavigate }) {
     };
 
     const getPasswordStrength = (password) => {
+        if (!password) return '';
         if (password.length < 8) return 'Weak';
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
@@ -86,7 +164,7 @@ function SignUp({ onNavigate }) {
         if (!formData.password) {
             newErrors.password = 'Password is required';
         } else if (!validatePassword(formData.password)) {
-            newErrors.password = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
+            newErrors.password = 'Password must meet all 5 security requirements';
         }
 
         if (formData.password !== formData.confirmPassword) {
@@ -114,6 +192,8 @@ function SignUp({ onNavigate }) {
             return;
         }
 
+        setLoading(true);
+
         try {
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
@@ -134,11 +214,11 @@ function SignUp({ onNavigate }) {
             });
 
             if (!response.ok) {
-                // Server returned an error — parse message if available
                 const errData = await response.json().catch(() => ({}));
                 const errorMessage = errData.message || errData.errors?.[0]?.msg || 'Sign up failed due to validation rules. Please check your inputs.';
 
                 setErrors({ submit: errorMessage });
+                setLoading(false);
                 return;
             }
 
@@ -147,16 +227,16 @@ function SignUp({ onNavigate }) {
             // Successful server signup
             localStorage.setItem('kmrl_token', data.token);
             localStorage.setItem('kmrl_user', JSON.stringify(data.user));
-            // Notify user with username (and remind about password they entered)
+
             if (formData.role === 'station_master') {
                 alert(`Account created successfully!\nUsername: ${formData.username}\n\nYour Station Master account has been submitted and is Pending Approval by a KMRL Officer. You can log in once it is approved.`);
             } else {
-                alert(`Account created successfully!\nUsername: ${formData.username}\nPlease remember your password (the one you entered).`);
+                alert(`Account created successfully!\nUsername: ${formData.username}\nPlease remember your password.`);
             }
             onNavigate('signin');
         } catch (error) {
             console.error('Sign up error:', error);
-            // Network error — create a local demo user as fallback (silent, no blocking alert)
+            // Network error fallback
             try {
                 const demoUsers = JSON.parse(localStorage.getItem('kmrl_demo_users') || '[]');
                 const demoUser = {
@@ -175,218 +255,417 @@ function SignUp({ onNavigate }) {
             } catch (e) {
                 setErrors({ submit: 'Network error — unable to create account. Please try again later.' });
             }
+        } finally {
+            setLoading(false);
         }
     };
 
-    return (
-        <div className="signup-container">
-            {/* Left side: Image/Video Area */}
-            <div className="signup-media-side">
-                <div className="signup-media-overlay"></div>
-                <img
-                    src="/images/login-img.png"
-                    alt="Metro train background"
-                    className="signup-image-bg"
-                />
-            </div>
+    // Real-time password requirement checks
+    const passwordChecks = {
+        length: formData.password.length >= 8,
+        upper: /[A-Z]/.test(formData.password),
+        lower: /[a-z]/.test(formData.password),
+        number: /[0-9]/.test(formData.password),
+        special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)
+    };
 
-            {/* Right side: Registration Form */}
-            <div className="signup-form-side">
-                <div className="signup-form-wrapper">
-                    <div className="signup-header">
-                        <h1>Create Account</h1>
-                        <p>Welcome! Please join KMRL Metro to continue.</p>
+    return (
+        <div className="signup-page">
+            {/* ── Top KMRL Brand Bar ── */}
+            <header className="auth-top-bar">
+                <div className="auth-top-bar-inner">
+                    <div className="auth-brand" onClick={() => onNavigate('home')} role="button" tabIndex={0} title="Return to Kochi Metro Home">
+                        <img src="/images/kmrl-logo.png" alt="Kochi Metro Rail Limited" className="auth-kmrl-logo" />
+                        <div className="auth-brand-text">
+                            <span className="auth-brand-title">KOCHI METRO</span>
+                            <span className="auth-brand-subtitle">Kochi Metro Rail Limited</span>
+                            <span className="auth-brand-tagline">Safe · Smart · Sustainable</span>
+                        </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="signup-form">
-                        {errors.submit && <div className="error-message">{errors.submit}</div>}
-
-                        <div className="form-group">
-                            <label htmlFor="fullName">Full Name</label>
-                            <input
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleInputChange}
-                                className={errors.fullName ? 'input-error' : ''}
-                            />
-                            {errors.fullName && <span className="error-text">{errors.fullName}</span>}
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="email">Email Address</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                className={errors.email ? 'input-error' : ''}
-                            />
-                            {errors.email && <span className="error-text">{errors.email}</span>}
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="username">Username</label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleInputChange}
-                                className={errors.username ? 'input-error' : ''}
-                            />
-                            {errors.username && <span className="error-text">{errors.username}</span>}
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="role">User Type *</label>
-                            <select
-                                id="role"
-                                name="role"
-                                value={formData.role}
-                                onChange={handleInputChange}
-                                className="form-select"
-                            >
-                                <option value="customer">👤 Customer / Passenger</option>
-                                <option value="station_master">🚇 Station Master</option>
-                            </select>
-                        </div>
-
-                        {formData.role !== 'customer' && (
-                            <>
-                                <div className="form-group">
-                                    <label htmlFor="designation">Designation *</label>
-                                    <input
-                                        type="text"
-                                        id="designation"
-                                        name="designation"
-                                        value={formData.designation}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your designation"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="stationAssigned">Assigned Station/Area *</label>
-                                    <input
-                                        type="text"
-                                        id="stationAssigned"
-                                        name="stationAssigned"
-                                        value={formData.stationAssigned}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter assigned station or area"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="passKey">Pass Key (for verification) *</label>
-                                    <input
-                                        type="text"
-                                        id="passKey"
-                                        name="passKey"
-                                        value={formData.passKey || ''}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter pass key provided by admin"
-                                    />
-                                    {errors.passKey && <span className="error-text">{errors.passKey}</span>}
-                                </div>
-                            </>
-                        )}
-
-                        <div className="form-group">
-                            <label htmlFor="password">Password *</label>
-                            <div className="password-input-wrapper">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter password"
-                                    className={errors.password ? 'input-error' : ''}
-                                />
-                                <button
-                                    type="button"
-                                    className="toggle-password"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                                </button>
-                            </div>
-                            {formData.password && (
-                                <div className={`strength-indicator strength-${passwordStrength.toLowerCase()}`}>
-                                    Strength: <strong>{passwordStrength}</strong>
-                                </div>
-                            )}
-                            <div className="password-requirements">
-                                <p>Password must contain:</p>
-                                <ul>
-                                    <li className={/[A-Z]/.test(formData.password) ? 'valid' : ''}>
-                                        ✓ Uppercase letter
-                                    </li>
-                                    <li className={/[a-z]/.test(formData.password) ? 'valid' : ''}>
-                                        ✓ Lowercase letter
-                                    </li>
-                                    <li className={/[0-9]/.test(formData.password) ? 'valid' : ''}>
-                                        ✓ Number
-                                    </li>
-                                    <li className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password) ? 'valid' : ''}>
-                                        ✓ Special character
-                                    </li>
-                                    <li className={formData.password.length >= 8 ? 'valid' : ''}>
-                                        ✓ At least 8 characters
-                                    </li>
-                                </ul>
-                            </div>
-                            {errors.password && <span className="error-text">{errors.password}</span>}
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword">Confirm Password *</label>
-                            <div className="password-input-wrapper">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleInputChange}
-                                    placeholder="Confirm password"
-                                    className={errors.confirmPassword ? 'input-error' : ''}
-                                />
-                                <button
-                                    type="button"
-                                    className="toggle-password"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                                </button>
-                            </div>
-                            {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
-                        </div>
-
-                        <div className="form-group checkbox">
-                            <input
-                                type="checkbox"
-                                id="savePassword"
-                                name="savePassword"
-                                checked={formData.savePassword}
-                                onChange={handleInputChange}
-                            />
-                            <label htmlFor="savePassword">Save password securely</label>
-                        </div>
-
-                        <button type="submit" className="btn-create-account">
-                            Create Account
+                    <div className="auth-top-actions">
+                        <button
+                            type="button"
+                            className="auth-back-btn"
+                            onClick={() => onNavigate('home')}
+                            aria-label="Back to home page"
+                        >
+                            <ArrowLeftIcon />
+                            <span>Back to Home</span>
                         </button>
-
-                        <p className="signin-link">
-                            Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('signin'); }}>Login Here</a>
-                        </p>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </header>
+
+            {/* ── Main Signup Container ── */}
+            <main className="auth-main-container">
+                <div className="auth-card-shell signup-card-shell">
+                    {/* ── Left Side: Authentic KMRL Transit Showcase ── */}
+                    <div className="auth-showcase-side">
+                        <div className="showcase-watermark-ring"></div>
+                        <div className="showcase-watermark-ring secondary"></div>
+
+                        <div className="showcase-top-badge">
+                            <span className="showcase-badge-dot"></span>
+                            <span>OFFICIAL PASSENGER REGISTRATION</span>
+                        </div>
+
+                        <div className="showcase-hero">
+                            <h2 className="showcase-title">Join Kochi Metro Today</h2>
+                            <p className="showcase-subtitle">
+                                Create your commuter account for paperless ticketing, automated card recharges, travel history, and real-time transit alerts.
+                            </p>
+                        </div>
+
+                        <div className="showcase-features-list">
+                            <div className="showcase-feature-item">
+                                <div className="feature-icon-bubble">
+                                    <CardIcon />
+                                </div>
+                                <div className="feature-text">
+                                    <h4>Kochi1 Digital Metro Card</h4>
+                                    <p>Get your virtual metro card with instant balance check, top-up, and 10% trip savings.</p>
+                                </div>
+                            </div>
+
+                            <div className="showcase-feature-item">
+                                <div className="feature-icon-bubble">
+                                    <TicketIcon />
+                                </div>
+                                <div className="feature-text">
+                                    <h4>Fast Contactless QR Passes</h4>
+                                    <p>Skip station queues with one-click digital QR tickets valid for 5 hours across all lines.</p>
+                                </div>
+                            </div>
+
+                            <div className="showcase-feature-item">
+                                <div className="feature-icon-bubble">
+                                    <MapIcon />
+                                </div>
+                                <div className="feature-text">
+                                    <h4>Interactive Journey Planner</h4>
+                                    <p>Accurate transfer guides, platform directions, and fare calculations across 25+ stations.</p>
+                                </div>
+                            </div>
+
+                            <div className="showcase-feature-item">
+                                <div className="feature-icon-bubble">
+                                    <ShieldIcon />
+                                </div>
+                                <div className="feature-text">
+                                    <h4>Verified & Secure Services</h4>
+                                    <p>Official KMRL encryption safeguarding your personal information and transaction records.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="showcase-footer">
+                            <span>24-Hour Passenger Helpline: <strong>1800-425-8022</strong></span>
+                        </div>
+                    </div>
+
+                    {/* ── Right Side: Redesigned Kochi Metro Sign Up Form ── */}
+                    <div className="auth-form-side">
+                        <div className="auth-form-wrapper">
+                            <div className="auth-form-header">
+                                <div className="auth-pill-label">NEW PASSENGER</div>
+                                <h1>Create Your Account</h1>
+                                <p>Join Kochi Metro for a smoother, smarter travel experience.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="auth-form" noValidate>
+                                {errors.submit && (
+                                    <div className="form-alert-error" role="alert">
+                                        <AlertIcon />
+                                        <span>{errors.submit}</span>
+                                    </div>
+                                )}
+
+                                <div className="form-group">
+                                    <label htmlFor="fullName">
+                                        Full Name <span className="req-star">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="fullName"
+                                        name="fullName"
+                                        placeholder="Enter your name"
+                                        value={formData.fullName}
+                                        onChange={handleInputChange}
+                                        className={errors.fullName ? 'input-error' : ''}
+                                        autoComplete="name"
+                                    />
+                                    {errors.fullName && (
+                                        <span className="field-error-text">
+                                            <AlertIcon /> {errors.fullName}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="email">
+                                        Email Address <span className="req-star">*</span>
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        placeholder="e.g. commuter@example.com"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        className={errors.email ? 'input-error' : ''}
+                                        autoComplete="email"
+                                    />
+                                    {errors.email && (
+                                        <span className="field-error-text">
+                                            <AlertIcon /> {errors.email}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="username">
+                                        Username <span className="req-star">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        placeholder="Choose a unique username"
+                                        value={formData.username}
+                                        onChange={handleInputChange}
+                                        className={errors.username ? 'input-error' : ''}
+                                        autoComplete="username"
+                                    />
+                                    {errors.username && (
+                                        <span className="field-error-text">
+                                            <AlertIcon /> {errors.username}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="role">
+                                        User Type <span className="req-star">*</span>
+                                    </label>
+                                    <div className="select-input-wrapper">
+                                        <select
+                                            id="role"
+                                            name="role"
+                                            value={formData.role}
+                                            onChange={handleInputChange}
+                                            className="auth-select"
+                                        >
+                                            <option value="customer">Customer / Passenger</option>
+                                            <option value="station_master">Station Master (Staff)</option>
+                                            <option value="officer">KMRL Officer (Admin)</option>
+                                        </select>
+                                        <span className="select-chevron-icon">
+                                            <ChevronDownIcon />
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Conditional Fields for Staff Roles */}
+                                {formData.role !== 'customer' && (
+                                    <div className="staff-fields-box">
+                                        <div className="staff-fields-badge">STAFF CREDENTIALS REQUIRED</div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="designation">
+                                                Designation <span className="req-star">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="designation"
+                                                name="designation"
+                                                placeholder="e.g. Senior Station Controller"
+                                                value={formData.designation}
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="stationAssigned">
+                                                Assigned Metro Station <span className="req-star">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="stationAssigned"
+                                                name="stationAssigned"
+                                                placeholder="e.g. Aluva, Edapally, MG Road"
+                                                value={formData.stationAssigned}
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="passKey">
+                                                KMRL Staff Pass Key <span className="req-star">*</span>
+                                            </label>
+                                            <input
+                                                type="password"
+                                                id="passKey"
+                                                name="passKey"
+                                                placeholder="Enter authorized KMRL pass key"
+                                                value={formData.passKey}
+                                                onChange={handleInputChange}
+                                                className={errors.passKey ? 'input-error' : ''}
+                                            />
+                                            {errors.passKey && (
+                                                <span className="field-error-text">
+                                                    <AlertIcon /> {errors.passKey}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="form-group">
+                                    <label htmlFor="password">
+                                        Password <span className="req-star">*</span>
+                                    </label>
+                                    <div className="password-input-wrapper">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            id="password"
+                                            name="password"
+                                            placeholder="Create a strong password"
+                                            value={formData.password}
+                                            onChange={handleInputChange}
+                                            className={errors.password ? 'input-error' : ''}
+                                            autoComplete="new-password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="toggle-password-btn"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            title={showPassword ? 'Hide password' : 'Show password'}
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        >
+                                            {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                                        </button>
+                                    </div>
+                                    {errors.password && (
+                                        <span className="field-error-text">
+                                            <AlertIcon /> {errors.password}
+                                        </span>
+                                    )}
+
+                                    {/* Password Strength Meter */}
+                                    {formData.password && (
+                                        <div className="strength-meter-wrap">
+                                            <div className="strength-meter-track">
+                                                <div className={`strength-meter-bar strength-${passwordStrength.toLowerCase()}`}></div>
+                                            </div>
+                                            <div className="strength-meter-caption">
+                                                Security Level: <strong className={`strength-txt-${passwordStrength.toLowerCase()}`}>{passwordStrength}</strong>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* 5-Rule Checklist Pills */}
+                                    <div className="password-rules-box">
+                                        <span className="rules-heading">Password Requirements:</span>
+                                        <div className="rules-grid">
+                                            <span className={`rule-pill ${passwordChecks.length ? 'satisfied' : ''}`}>
+                                                {passwordChecks.length ? <CheckIcon /> : <CircleIcon />} 8+ Characters
+                                            </span>
+                                            <span className={`rule-pill ${passwordChecks.upper ? 'satisfied' : ''}`}>
+                                                {passwordChecks.upper ? <CheckIcon /> : <CircleIcon />} Uppercase Letter
+                                            </span>
+                                            <span className={`rule-pill ${passwordChecks.lower ? 'satisfied' : ''}`}>
+                                                {passwordChecks.lower ? <CheckIcon /> : <CircleIcon />} Lowercase Letter
+                                            </span>
+                                            <span className={`rule-pill ${passwordChecks.number ? 'satisfied' : ''}`}>
+                                                {passwordChecks.number ? <CheckIcon /> : <CircleIcon />} Number (0-9)
+                                            </span>
+                                            <span className={`rule-pill ${passwordChecks.special ? 'satisfied' : ''}`}>
+                                                {passwordChecks.special ? <CheckIcon /> : <CircleIcon />} Special Character
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="confirmPassword">
+                                        Confirm Password <span className="req-star">*</span>
+                                    </label>
+                                    <div className="password-input-wrapper">
+                                        <input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            placeholder="Re-enter your password"
+                                            value={formData.confirmPassword}
+                                            onChange={handleInputChange}
+                                            className={errors.confirmPassword ? 'input-error' : ''}
+                                            autoComplete="new-password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="toggle-password-btn"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                                            aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                                        >
+                                            {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                                        </button>
+                                    </div>
+                                    {errors.confirmPassword && (
+                                        <span className="field-error-text">
+                                            <AlertIcon /> {errors.confirmPassword}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="remember-checkbox-row">
+                                    <label className="checkbox-label">
+                                        <input
+                                            type="checkbox"
+                                            name="savePassword"
+                                            checked={formData.savePassword}
+                                            onChange={handleInputChange}
+                                        />
+                                        <span>Save credentials securely on this browser</span>
+                                    </label>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="auth-primary-btn"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <span className="btn-spinner-wrap">
+                                            <span className="auth-spinner"></span>
+                                            Creating Account...
+                                        </span>
+                                    ) : (
+                                        'Create Account'
+                                    )}
+                                </button>
+
+                                <div className="auth-switch-prompt">
+                                    <span>Already have an account?</span>{' '}
+                                    <button
+                                        type="button"
+                                        className="switch-page-link"
+                                        onClick={() => onNavigate('signin')}
+                                    >
+                                        Login Here
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* ── Subtle Bottom Footer ── */}
+            <footer className="auth-bottom-footer">
+                <p>© {new Date().getFullYear()} Kochi Metro Rail Limited. All rights reserved. • Safe · Smart · Sustainable</p>
+            </footer>
         </div>
     );
 }

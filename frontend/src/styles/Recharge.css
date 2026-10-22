@@ -95,13 +95,11 @@
 }
 
 .hero-image-container {
-    position: absolute;
-    bottom: -10px;
-    right: 5%;
-    z-index: 1;
-    width: 650px;
-    max-width: 55%;
-    transform: rotate(-5deg);
+    position: relative;
+    z-index: 2;
+    width: 540px;
+    max-width: 50%;
+    margin-left: auto;
 }
 
 .metro-card-img {
@@ -367,6 +365,12 @@
         padding-top: 8rem;
         text-align: center;
         gap: 4rem;
+    }
+
+    .hero-image-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
     }
 
     .hero-buttons {

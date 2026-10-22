@@ -1,0 +1,201 @@
+/* ══════════════════════════════════════════════════════════════════
+   KMRL - Modern Passenger Facilities Section Styles
+   ══════════════════════════════════════════════════════════════════ */
+
+.kmrl-facilities-section {
+    padding: 4.5rem 2rem;
+    background: #ffffff;
+    font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, sans-serif;
+    position: relative;
+    border-top: 1px solid #f1f5f9;
+}
+
+.kmrl-facilities-container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+/* Header */
+.kmrl-facilities-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.kmrl-facilities-pretitle {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #0f172a;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.35rem;
+}
+
+.kmrl-facilities-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #39ae62;
+    line-height: 1.2;
+    margin: 0 0 0.85rem;
+}
+
+.kmrl-facilities-desc {
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    color: #64748b;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* Category Filter Tabs */
+.kmrl-facilities-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+}
+
+.kmrl-cat-tab {
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.kmrl-cat-tab:hover {
+    border-color: #0077c8;
+    color: #0077c8;
+    background: #f0f7ff;
+}
+
+.kmrl-cat-tab.is-active {
+    background: #0077c8;
+    color: #ffffff;
+    border-color: #0077c8;
+    box-shadow: 0 4px 12px rgba(0, 119, 200, 0.25);
+}
+
+/* Facilities Cards Grid */
+.kmrl-facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.kmrl-facility-card {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    position: relative;
+}
+
+.kmrl-facility-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+
+.kmrl-facility-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.kmrl-facility-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f7ff;
+    color: #0077c8;
+    flex-shrink: 0;
+}
+
+.kmrl-facility-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: #ecfdf5;
+    color: #059669;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.kmrl-facility-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px;
+    line-height: 1.3;
+}
+
+.kmrl-facility-card p {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0 0 16px;
+    font-weight: 500;
+}
+
+.kmrl-facility-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0284c7;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.kmrl-facility-footer svg {
+    flex-shrink: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+    .kmrl-facilities-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .kmrl-facilities-title {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .kmrl-facilities-section {
+        padding: 3rem 1.25rem;
+    }
+
+    .kmrl-facilities-title {
+        font-size: 1.85rem;
+    }
+
+    .kmrl-facilities-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .kmrl-cat-tab {
+        padding: 6px 14px;
+        font-size: 0.825rem;
+    }
+}

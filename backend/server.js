@@ -15,9 +15,6 @@ require('dotenv').config();
 const app = express();
 
 
-// Connect to MongoDB
-connectDB();
-
 // Create default users if they don't exist (development convenience)
 const User = require('./models/User');
 const ensureDefaultUsers = async () => {
@@ -63,7 +60,13 @@ const ensureDefaultUsers = async () => {
         console.error('Error creating default users:', err.message);
     }
 };
-ensureDefaultUsers();
+
+// Connect to MongoDB Atlas and seed development accounts if needed
+connectDB().then(() => {
+    ensureDefaultUsers();
+}).catch((err) => {
+    console.error('Database connection error on server startup:', err.message);
+});
 
 // Middleware
 app.use(cors());
@@ -74,9 +77,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(activityLogger);
 
 const userRoutes = require('./routes/user');
+const cardRoutes = require('./routes/card');
+const ticketRoutes = require('./routes/tickets');
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/metro', ticketRoutes);
 app.use('/api/metro', metroRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/lines', linesRoutes);
@@ -85,6 +91,7 @@ app.use('/api/fare', fareRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/card', cardRoutes);
 
 // Welcome route
 app.get('/api/welcome', (req, res) => {

@@ -1,0 +1,492 @@
+/* ==========================================================================
+   KMRL Recharge & Ticket User Guide Page Styling
+   ========================================================================== */
+
+.userguide-container {
+    background: #f8fafc;
+    min-height: calc(100vh - 75px);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0f172a;
+    padding-bottom: 4rem;
+}
+
+/* ── Top Header Strip ──────────────────────────────────────────── */
+.userguide-header-strip {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.85rem 1.5rem;
+    position: sticky;
+    top: 75px;
+    z-index: 20;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.userguide-header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-back-recharge {
+    background: #f1f5f9;
+    color: #059db2;
+    border: 1px solid #cbd5e1;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.15s ease;
+}
+
+.btn-back-recharge:hover {
+    background: #059db2;
+    color: #ffffff;
+    border-color: #059db2;
+    transform: translateX(-2px);
+}
+
+.userguide-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid #e2e8f0;
+}
+
+/* ── Main Content Container ────────────────────────────────────── */
+.userguide-main-content {
+    max-width: 900px;
+    margin: 2rem auto 0 auto;
+    padding: 0 1.25rem;
+}
+
+/* ── Hero Section ──────────────────────────────────────────────── */
+.userguide-hero {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 2.25rem 2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    margin-bottom: 1.75rem;
+    text-align: left;
+}
+
+.hero-icon-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ecfeff;
+    color: #059db2;
+    border: 1px solid #a5f3fc;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.userguide-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+}
+
+.userguide-lead {
+    font-size: 1.05rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+    max-width: 780px;
+}
+
+/* Quick Jump Bar */
+.userguide-quick-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.quick-link-btn {
+    text-decoration: none;
+    background: #f8fafc;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.15s ease;
+}
+
+.quick-link-btn:hover {
+    background: #059db2;
+    color: #ffffff;
+    border-color: #059db2;
+    transform: translateY(-1px);
+}
+
+.quick-nav-num {
+    background: rgba(0, 0, 0, 0.08);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.quick-link-btn:hover .quick-nav-num {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* ── Distinction Callout ───────────────────────────────────────── */
+.userguide-distinction-callout {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 1.5px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.callout-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.callout-heading {
+    margin: 0 0 0.35rem 0;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #1e3a8a;
+}
+
+.callout-text {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #334155;
+    line-height: 1.55;
+}
+
+.inline-link-btn {
+    background: transparent;
+    border: none;
+    color: #0284c7;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.inline-link-btn:hover {
+    color: #0369a1;
+}
+
+/* ── Guide Card Sections ───────────────────────────────────────── */
+.guide-card-section {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 2.25rem 2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    margin-bottom: 2rem;
+}
+
+.section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.section-badge-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #059db2 0%, #088b9e 100%);
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(5, 157, 178, 0.25);
+}
+
+.section-heading {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.25rem 0;
+    line-height: 1.25;
+}
+
+.section-subtext {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* ── Steps Timeline ────────────────────────────────────────────── */
+.steps-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: relative;
+}
+
+.step-card {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    transition: all 0.15s ease;
+}
+
+.step-card:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.step-marker {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.35rem 0;
+}
+
+.step-desc {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.code-pill {
+    background: #e2e8f0;
+    color: #0f172a;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+}
+
+.control-symbol-pill {
+    display: inline-block;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    font-weight: 900;
+    font-size: 0.95rem;
+    padding: 0 0.45rem;
+    border-radius: 6px;
+    line-height: 1.2;
+}
+
+.environment-notice-box {
+    margin-top: 0.75rem;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.45;
+}
+
+.notice-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* ── Troubleshooting Grid ──────────────────────────────────────── */
+.troubleshooting-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.trouble-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    transition: all 0.15s ease;
+}
+
+.trouble-card:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.trouble-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.trouble-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.trouble-header h4 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.trouble-desc {
+    margin: 0;
+    font-size: 0.86rem;
+    color: #475569;
+    line-height: 1.55;
+}
+
+/* ── Footer Navigation CTA ─────────────────────────────────────── */
+.userguide-footer-cta {
+    background: linear-gradient(135deg, #059db2 0%, #0369a1 100%);
+    color: #ffffff;
+    border-radius: 18px;
+    padding: 2.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(5, 157, 178, 0.35);
+}
+
+.cta-content h3 {
+    margin: 0 0 0.35rem 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.cta-content p {
+    margin: 0;
+    font-size: 0.92rem;
+    opacity: 0.92;
+    line-height: 1.5;
+}
+
+.cta-button-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.btn-cta-primary {
+    background: #ffffff;
+    color: #059db2;
+    border: none;
+    padding: 0.75rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: all 0.15s ease;
+}
+
+.btn-cta-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cta-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    padding: 0.75rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
+}
+
+/* ── Responsive Styling ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .troubleshooting-grid {
+        grid-template-columns: 1fr;
+    }
+    .userguide-footer-cta {
+        flex-direction: column;
+        text-align: center;
+    }
+    .cta-button-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn-cta-primary,
+    .btn-cta-secondary {
+        width: 100%;
+    }
+    .userguide-title {
+        font-size: 1.75rem;
+    }
+}
