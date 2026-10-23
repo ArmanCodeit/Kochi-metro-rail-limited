@@ -1,5 +1,13 @@
 {
+  "name": "kochi-metro-rail-limited",
+  "version": "1.0.0",
+  "description": "Kochi Metro Rail Limited (KMRL) Web Application",
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "node backend/server.js"
+  },
   "dependencies": {
     "@vercel/analytics": "^1.6.1"
   }
 }
+

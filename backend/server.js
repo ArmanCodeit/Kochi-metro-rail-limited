@@ -159,7 +159,23 @@ app.get('/api/welcome', (req, res) => {
     });
 });
 
-// Note: frontend static serving removed to keep backend and frontend running on separate ports
+// Serve static frontend assets and support SPA routing when production build (frontend/dist) is present
+const path = require('path');
+const fs = require('fs');
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+
+if (fs.existsSync(frontendDistPath)) {
+    app.use(express.static(frontendDistPath));
+
+    // Handle SPA client-side routing fallback for non-API routes
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return next();
+        }
+        res.sendFile(path.join(frontendDistPath, 'index.html'));
+    });
+}
+
 const PORT = parseInt(process.env.PORT, 10) || 5000;
 
 app.listen(PORT, '0.0.0.0', () => {
