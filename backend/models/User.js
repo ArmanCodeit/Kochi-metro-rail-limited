@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: [true, 'Full name is required'],
+        trim: true,
         match: [/^[A-Za-z\s]+$/, 'Name should contain only letters and spaces']
     },
     email: {
@@ -12,12 +13,14 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Email is required'],
         unique: true,
         lowercase: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+        trim: true,
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
     },
     username: {
         type: String,
         required: [true, 'Username is required'],
         unique: true,
+        trim: true,
         minlength: [3, 'Username must be at least 3 characters']
     },
     password: {

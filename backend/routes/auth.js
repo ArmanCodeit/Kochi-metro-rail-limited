@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
@@ -15,9 +16,11 @@ const generateToken = (id) => {
 // Validation middleware
 const validateSignup = [
     body('fullName')
+        .trim()
         .notEmpty().withMessage('Full name is required')
         .matches(/^[A-Za-z\s]+$/).withMessage('Name should contain only letters'),
     body('email')
+        .trim()
         .isEmail().withMessage('Please enter a valid email')
         .normalizeEmail(),
     body('password')
@@ -28,6 +31,7 @@ const validateSignup = [
         .custom((value, { req }) => value === req.body.password)
         .withMessage('Passwords do not match'),
     body('username')
+        .trim()
         .isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
     body('userType')
         .isIn(['customer', 'station_master', 'officer']).withMessage('Invalid user type')
@@ -43,18 +47,28 @@ const validateLogin = [
 // Signup Route
 router.post('/signup', validateSignup, async (req, res) => {
     try {
-        // Check validation errors
+        // 1. Verify database connectivity before processing
+        if (mongoose.connection.readyState !== 1) {
+            console.error('[Auth/Signup] Database not ready (readyState: ' + mongoose.connection.readyState + ')');
+            return res.status(503).json({
+                message: 'Database service is temporarily unavailable. Please verify MongoDB Atlas connection and network access.'
+            });
+        }
+
+        // 2. Check express-validator rules
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ errors: errors.array(), message: errors.array()[0]?.msg || 'Validation failed' });
         }
 
         const { fullName, email, password, username, userType, designation, stationAssigned } = req.body;
 
-        // If registering as station_master or officer, require a passKey to verify authenticity
+        const cleanFullName = String(fullName || '').trim();
+        const cleanEmail = String(email || '').trim().toLowerCase();
+        const cleanUsername = String(username || '').trim();
+
+        // 3. If registering as station_master or officer, require a passKey to verify authenticity
         if (userType === 'station_master' || userType === 'officer') {
-            // Allow protected signup by default in development/local environments.
-            // In production, provide PASS_KEYS or set ALLOW_PROTECTED_SIGNUP=true explicitly.
             const allowOpenEnv = (process.env.ALLOW_PROTECTED_SIGNUP || '').toLowerCase() === 'true';
             const isDev = (process.env.NODE_ENV || 'development') !== 'production';
             const allowOpen = allowOpenEnv || isDev;
@@ -74,24 +88,24 @@ router.post('/signup', validateSignup, async (req, res) => {
             }
         }
 
-        // Check if user already exists
+        // 4. Check if user already exists
         const userExists = await User.findOne({
-            $or: [{ email }, { username }]
+            $or: [{ email: cleanEmail }, { username: cleanUsername }]
         });
 
         if (userExists) {
             return res.status(400).json({
-                message: userExists.email === email
+                message: userExists.email === cleanEmail
                     ? 'Email already registered'
                     : 'Username already taken'
             });
         }
 
-        // Create new user
+        // 5. Create new user with trimmed/sanitized fields
         const user = await User.create({
-            fullName,
-            email,
-            username,
+            fullName: cleanFullName,
+            email: cleanEmail,
+            username: cleanUsername,
             password,
             userType: userType || 'customer',
             designation: designation || null,
@@ -99,7 +113,7 @@ router.post('/signup', validateSignup, async (req, res) => {
             accountStatus: userType === 'station_master' ? 'pending' : 'active'
         });
 
-        // Generate token
+        // 6. Generate JWT token
         const token = generateToken(user._id);
 
         res.status(201).json({
@@ -116,7 +130,31 @@ router.post('/signup', validateSignup, async (req, res) => {
 
     } catch (error) {
         console.error('Signup error:', error);
-        res.status(500).json({ message: 'Server error' });
+
+        // Map MongoDB duplicate key collision (E11000) to clean 400 error
+        if (error.code === 11000) {
+            const isEmail = error.keyPattern?.email || (error.message && error.message.includes('email'));
+            return res.status(400).json({
+                message: isEmail ? 'Email already registered' : 'Username already taken'
+            });
+        }
+
+        // Map Mongoose Schema validation errors to clean 400 error
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message).join('. ');
+            return res.status(400).json({
+                message: messages || 'Validation error. Please verify your registration inputs.'
+            });
+        }
+
+        // Map Database connection errors to clean 503 error
+        if (error.name === 'MongooseServerSelectionError' || error.name === 'MongooseError') {
+            return res.status(503).json({
+                message: 'Database connection failed. Please ensure MongoDB Atlas allows connections from all IPs (0.0.0.0/0).'
+            });
+        }
+
+        res.status(500).json({ message: error.message || 'Server error during account creation.' });
     }
 });
 
@@ -178,7 +216,12 @@ router.post('/login', validateLogin, async (req, res) => {
 
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error' });
+        if (error.name === 'MongooseServerSelectionError' || error.name === 'MongooseError') {
+            return res.status(503).json({
+                message: 'Database connection failed. Please ensure MongoDB Atlas allows connections from all IPs (0.0.0.0/0).'
+            });
+        }
+        res.status(500).json({ message: error.message || 'Server error during login.' });
     }
 });
 

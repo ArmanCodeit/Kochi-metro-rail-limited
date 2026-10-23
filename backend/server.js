@@ -10,6 +10,9 @@ const fareRoutes = require('./routes/fare');
 const activityLogger = require('./middleware/activityLogger');
 const activityRoutes = require('./routes/activity');
 const adminRoutes = require('./routes/admin');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 require('dotenv').config();
 
 const app = express();
@@ -111,13 +114,25 @@ const ensureDefaultStations = async () => {
     }
 };
 
-// Connect to MongoDB Atlas and seed development accounts if needed
-connectDB().then(() => {
-    ensureDefaultUsers();
-    ensureDefaultStations();
-}).catch((err) => {
-    console.error('Database connection error on server startup:', err.message);
-});
+// Connect to MongoDB Atlas with auto-retry on cold start / transient network delays
+const mongoose = require('mongoose');
+let isConnecting = false;
+const initDatabase = async () => {
+    if (isConnecting || mongoose.connection.readyState === 1) return;
+    isConnecting = true;
+    try {
+        await connectDB();
+        await ensureDefaultUsers();
+        await ensureDefaultStations();
+    } catch (err) {
+        console.error('Database connection error on server startup:', err.message);
+        console.log('Will retry connecting to MongoDB Atlas in 10 seconds...');
+        setTimeout(initDatabase, 10000);
+    } finally {
+        isConnecting = false;
+    }
+};
+initDatabase();
 
 // Middleware
 app.use(cors());
@@ -144,6 +159,22 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/card', cardRoutes);
 
+// Health check endpoint for Render and operations monitoring
+app.get('/api/health', (req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const isDbConnected = dbState === 1;
+    res.status(isDbConnected ? 200 : 503).json({
+        status: isDbConnected ? 'healthy' : 'degraded',
+        database: {
+            connected: isDbConnected,
+            readyState: dbState,
+            host: mongoose.connection.host || 'unknown',
+            name: mongoose.connection.name || 'unknown'
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Welcome route
 app.get('/api/welcome', (req, res) => {
     res.json({
@@ -160,8 +191,6 @@ app.get('/api/welcome', (req, res) => {
 });
 
 // Serve static frontend assets and support SPA routing when production build (frontend/dist) is present
-const path = require('path');
-const fs = require('fs');
 const frontendDistPath = path.join(__dirname, '../frontend/dist');
 
 if (fs.existsSync(frontendDistPath)) {
