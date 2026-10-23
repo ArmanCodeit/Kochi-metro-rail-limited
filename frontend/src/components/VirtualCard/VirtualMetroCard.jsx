@@ -4,19 +4,60 @@ import '../../styles/VirtualMetroCard.css';
 const VirtualMetroCard = ({ card, loading, onRefresh, isAuthenticated, onRechargeClick }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [copyFeedback, setCopyFeedback] = useState(null);
+
+    // Safely retrieve authenticated profile info from local storage as reliable fallback
+    const storedUser = (() => {
+        try {
+            return JSON.parse(localStorage.getItem('kmrl_user'));
+        } catch {
+            return null;
+        }
+    })();
+
+    const resolvedName = card?.cardHolderName || storedUser?.fullName || `${storedUser?.firstName || ''} ${storedUser?.lastName || ''}`.trim() || storedUser?.username;
 
     // Fallbacks if not logged in or loading
     const displayCardNumber = card?.cardNumber || '4180 5701 2345 6789';
-    const displayHolder = (card?.cardHolderName || 'KMRL COMMUTER').toUpperCase();
+    const displayHolder = (resolvedName || 'KMRL COMMUTER').toUpperCase();
     const displayBalance = typeof card?.balance === 'number' ? card.balance.toFixed(2) : '100.00';
     const displayExpiry = card?.expiryDate || '08/29';
+    const displayCvv = card?.cvv || '824';
 
-    const handleCopy = (e) => {
-        e.stopPropagation();
-        if (card?.cardNumber) {
-            navigator.clipboard?.writeText(card.cardNumber);
+    const handleCopy = async (e) => {
+        if (e) e.stopPropagation();
+        const numberToCopy = card?.cardNumber || (isAuthenticated ? displayCardNumber : '');
+        if (!numberToCopy) {
+            setCopyFeedback({ type: 'error', message: 'No card number available to copy.' });
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(numberToCopy);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            setCopyFeedback({ type: 'success', message: `Card number copied: ${numberToCopy}` });
+            setTimeout(() => {
+                setCopied(false);
+                setCopyFeedback(null);
+            }, 3000);
+        } catch (err) {
+            // Fallback for browsers with restricted clipboard permission
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = numberToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                setCopied(true);
+                setCopyFeedback({ type: 'success', message: `Card number copied: ${numberToCopy}` });
+                setTimeout(() => {
+                    setCopied(false);
+                    setCopyFeedback(null);
+                }, 3000);
+            } catch {
+                setCopyFeedback({ type: 'error', message: 'Failed to copy card number.' });
+            }
         }
     };
 
@@ -91,7 +132,7 @@ const VirtualMetroCard = ({ card, loading, onRefresh, isAuthenticated, onRecharg
                     <div className="card-back-content">
                         <div className="card-cvv-row">
                             <div className="card-sig-panel"></div>
-                            <div className="card-cvv-box">CVV: 824</div>
+                            <div className="card-cvv-box">CVV: {displayCvv}</div>
                         </div>
 
                         <div className="card-back-disclaimer">
@@ -119,6 +160,17 @@ const VirtualMetroCard = ({ card, loading, onRefresh, isAuthenticated, onRecharg
                 {isAuthenticated && (
                     <button
                         type="button"
+                        className="card-copy-btn"
+                        onClick={handleCopy}
+                        title="Copy card number to clipboard"
+                    >
+                        {copied ? 'Card Number Copied!' : 'Copy Card Number'}
+                    </button>
+                )}
+
+                {isAuthenticated && (
+                    <button
+                        type="button"
                         className="card-refresh-btn"
                         onClick={onRefresh}
                         disabled={loading}
@@ -127,17 +179,25 @@ const VirtualMetroCard = ({ card, loading, onRefresh, isAuthenticated, onRecharg
                         {loading ? 'Refreshing...' : 'Refresh Balance'}
                     </button>
                 )}
-
-                {card?.cardNumber && (
-                    <button
-                        type="button"
-                        className="card-flip-btn"
-                        onClick={handleCopy}
-                    >
-                        {copied ? 'Copied!' : 'Copy Number'}
-                    </button>
-                )}
             </div>
+
+            {copyFeedback && (
+                <div
+                    style={{
+                        marginTop: '0.6rem',
+                        padding: '0.45rem 0.8rem',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        textAlign: 'center',
+                        background: copyFeedback.type === 'success' ? '#ecfdf5' : '#fef2f2',
+                        color: copyFeedback.type === 'success' ? '#047857' : '#b91c1c',
+                        border: `1px solid ${copyFeedback.type === 'success' ? '#a7f3d0' : '#fecaca'}`
+                    }}
+                >
+                    {copyFeedback.message}
+                </div>
+            )}
 
             {!isAuthenticated && (
                 <div className="guest-card-banner">

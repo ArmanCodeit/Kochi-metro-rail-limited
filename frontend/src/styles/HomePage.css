@@ -1159,6 +1159,40 @@
     }
 }
 
+@media (max-width: 540px) {
+    .parent,
+    .bento-grid-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .div1,
+    .div2,
+    .div3,
+    .div4,
+    .div5 {
+        grid-column: span 1;
+        min-height: auto;
+    }
+
+    .div1 {
+        min-height: 220px;
+    }
+
+    .div2 {
+        min-height: 190px;
+    }
+
+    .div3,
+    .div4 {
+        min-height: 140px;
+    }
+
+    .div5 {
+        min-height: 160px;
+    }
+}
+
 /* ───────────────────────────────
    Notices & Alerts Styles (Div 5)
    ─────────────────────────────── */
@@ -1475,6 +1509,56 @@
     border-color: #d946ef;
 }
 
+/* Responsive Services Grid */
+@media (max-width: 1024px) {
+    .services-grid-parent {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+        gap: 12px;
+        min-height: auto;
+    }
+
+    .services-div1,
+    .services-div2,
+    .services-div6,
+    .services-div7,
+    .services-div8,
+    .services-div9 {
+        grid-column: span 1 !important;
+        grid-row: auto !important;
+        min-height: 160px;
+    }
+
+    .services-div5 {
+        grid-column: span 2 !important;
+        grid-row: auto !important;
+        min-height: 380px;
+    }
+}
+
+@media (max-width: 640px) {
+    .services-grid-parent {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .services-div1,
+    .services-div2,
+    .services-div5,
+    .services-div6,
+    .services-div7,
+    .services-div8,
+    .services-div9 {
+        grid-column: span 1 !important;
+        grid-row: auto !important;
+        min-height: auto;
+    }
+
+    .services-div5 {
+        min-height: 320px;
+    }
+}
+
 /* ───────────────────────────────
    Experience Section (New)
    ─────────────────────────────── */
@@ -1483,6 +1567,18 @@
     width: 100%;
     margin: 0;
     padding: 0 5rem;
+}
+
+@media (max-width: 900px) {
+    .experience-section .section-container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .experience-section .section-container {
+        padding: 0 0.75rem;
+    }
 }
 
 .experience-parent {
@@ -1937,4 +2033,56 @@
     object-fit: cover;
     max-height: 100px;
     border-radius: 0 0 24px 24px;
+}
+
+@media (max-width: 520px) {
+    .fare-modal-wrapper {
+        margin: 0 10px;
+        max-width: calc(100vw - 20px);
+    }
+
+    .fare-tab-header {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 0;
+    }
+
+    .fare-tab-active {
+        margin-right: 0;
+        margin-bottom: 0;
+        border-radius: 16px 16px 0 0;
+        padding: 12px 16px;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .fare-tab-inactive {
+        border-radius: 0;
+        padding: 12px 14px;
+    }
+
+    .fare-main-body {
+        padding: 18px 14px;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .fare-cards-flex {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .fare-actions-container {
+        flex-direction: column-reverse;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .fare-getfare-solid-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .fare-skyline-bottom {
+        margin: 10px -14px -18px;
+    }
 }

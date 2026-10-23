@@ -162,16 +162,18 @@ function SearchMetro({ onLogout, user, onNavigate }) {
     };
 
     const calculateFare = (distance, passengers) => {
-        let baseFare = 20; // Base fare in rupees
+        let baseFare = 10;
 
-        if (distance <= 2) baseFare = 20;
-        else if (distance <= 6) baseFare = 25;
-        else if (distance <= 10) baseFare = 30;
-        else if (distance <= 14) baseFare = 35;
-        else if (distance <= 18) baseFare = 40;
-        else baseFare = 50;
+        if (distance <= 2) baseFare = 10;
+        else if (distance <= 5) baseFare = 15;
+        else if (distance <= 8) baseFare = 20;
+        else if (distance <= 12) baseFare = 25;
+        else if (distance <= 15) baseFare = 30;
+        else if (distance <= 20) baseFare = 40;
+        else if (distance <= 25) baseFare = 50;
+        else baseFare = 60;
 
-        return baseFare * parseInt(passengers);
+        return baseFare * (parseInt(passengers, 10) || 1);
     };
 
     const validateSearch = () => {

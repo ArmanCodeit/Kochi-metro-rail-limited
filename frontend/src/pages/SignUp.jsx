@@ -96,6 +96,7 @@ function SignUp({ onNavigate }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [successModalData, setSuccessModalData] = useState(null);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -228,33 +229,16 @@ function SignUp({ onNavigate }) {
             localStorage.setItem('kmrl_token', data.token);
             localStorage.setItem('kmrl_user', JSON.stringify(data.user));
 
-            if (formData.role === 'station_master') {
-                alert(`Account created successfully!\nUsername: ${formData.username}\n\nYour Station Master account has been submitted and is Pending Approval by a KMRL Officer. You can log in once it is approved.`);
-            } else {
-                alert(`Account created successfully!\nUsername: ${formData.username}\nPlease remember your password.`);
-            }
-            onNavigate('signin');
+            setSuccessModalData({
+                username: data.user?.username || formData.username,
+                role: formData.role,
+                message: formData.role === 'station_master'
+                    ? 'Your Station Master account application has been submitted and is pending approval by a KMRL Officer. You will be able to log in once approved.'
+                    : 'Your Kochi Metro account has been created successfully. You can now proceed to login to access your digital metro card, recharges, and tickets.'
+            });
         } catch (error) {
             console.error('Sign up error:', error);
-            // Network error fallback
-            try {
-                const demoUsers = JSON.parse(localStorage.getItem('kmrl_demo_users') || '[]');
-                const demoUser = {
-                    id: 'demo-' + Date.now(),
-                    fullName: formData.fullName,
-                    email: formData.email,
-                    username: formData.username,
-                    password: formData.password,
-                    userType: formData.role
-                };
-                demoUsers.push(demoUser);
-                localStorage.setItem('kmrl_demo_users', JSON.stringify(demoUsers));
-                alert(`Network unreachable — demo account created locally.\nUsername: ${demoUser.username}\nPassword: ${demoUser.password}`);
-                onNavigate('signin');
-                return;
-            } catch (e) {
-                setErrors({ submit: 'Network error — unable to create account. Please try again later.' });
-            }
+            setErrors({ submit: 'Network error — unable to create account. Please check your connection and try again.' });
         } finally {
             setLoading(false);
         }
@@ -666,6 +650,68 @@ function SignUp({ onNavigate }) {
             <footer className="auth-bottom-footer">
                 <p>© {new Date().getFullYear()} Kochi Metro Rail Limited. All rights reserved. • Safe · Smart · Sustainable</p>
             </footer>
+
+            {/* ── In-page Success Modal Popup ── */}
+            {successModalData && (
+                <div 
+                    className="signup-success-backdrop" 
+                    onClick={() => { setSuccessModalData(null); onNavigate('signin'); }}
+                    role="presentation"
+                >
+                    <div 
+                        className="signup-success-modal" 
+                        onClick={(e) => e.stopPropagation()} 
+                        role="dialog" 
+                        aria-modal="true" 
+                        aria-labelledby="signup-success-heading"
+                    >
+                        <button
+                            type="button"
+                            className="signup-modal-close-btn"
+                            onClick={() => { setSuccessModalData(null); onNavigate('signin'); }}
+                            aria-label="Close dialog"
+                        >
+                            &times;
+                        </button>
+
+                        <div className="signup-modal-icon-container">
+                            <div className="signup-modal-icon-circle">
+                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00a859" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <h2 id="signup-success-heading" className="signup-modal-heading">
+                            Account Created Successfully!
+                        </h2>
+
+                        <p className="signup-modal-message">
+                            {successModalData.message}
+                        </p>
+
+                        {successModalData.username && (
+                            <div className="signup-modal-user-card">
+                                <span className="signup-badge-label">Assigned Username</span>
+                                <span className="signup-badge-value">{successModalData.username}</span>
+                            </div>
+                        )}
+
+                        <div className="signup-modal-actions">
+                            <button
+                                type="button"
+                                className="signup-modal-login-btn"
+                                onClick={() => {
+                                    setSuccessModalData(null);
+                                    onNavigate('signin');
+                                }}
+                            >
+                                Continue to Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

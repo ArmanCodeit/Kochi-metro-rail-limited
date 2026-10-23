@@ -41,10 +41,14 @@ module.exports = async function activityLogger(req, res, next) {
             userAgent: req.headers['user-agent'] || ''
         });
 
-        await activity.save();
+        activity.save().catch(err => {
+            if (process.env.NODE_ENV !== 'production') {
+                console.warn('Activity logger background save notice:', err.message);
+            }
+        });
         next();
     } catch (err) {
-        console.error('Activity logger error:', err);
+        console.error('Activity logger error:', err.message || err);
         next();
     }
 };

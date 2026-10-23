@@ -1384,6 +1384,7 @@
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
 }
 
 .ticket-comparison h3 {
@@ -1425,16 +1426,48 @@
 }
 
 @media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .dashboard-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dashboard-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-btn {
+        flex: 0 0 auto;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
     .ticket-types-grid {
         grid-template-columns: 1fr;
     }
 
+    .ticket-comparison {
+        padding: 1.25rem 1rem;
+    }
+
     .comparison-table {
-        font-size: 0.9rem;
+        min-width: 500px;
+        font-size: 0.88rem;
     }
 
     .comparison-table th,
     .comparison-table td {
-        padding: 10px;
+        padding: 8px 10px;
     }
 }

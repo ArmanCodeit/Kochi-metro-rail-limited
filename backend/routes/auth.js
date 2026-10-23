@@ -135,11 +135,15 @@ router.post('/login', validateLogin, async (req, res) => {
             return res.status(400).json({ message: 'Please enter CAPTCHA' });
         }
 
-        // Find user by email or username
+        const cleanedIdentifier = (emailOrUsername || '').trim();
+        const lowerIdentifier = cleanedIdentifier.toLowerCase();
+
+        // Find user by email or username (handling case sensitivity and trimming)
         const user = await User.findOne({
             $or: [
-                { email: emailOrUsername },
-                { username: emailOrUsername }
+                { email: lowerIdentifier },
+                { username: cleanedIdentifier },
+                { username: lowerIdentifier }
             ]
         });
 

@@ -98,12 +98,14 @@ function HomePage({ onNavigate }) {
         const dist = parseFloat(fareDistance);
         if (isNaN(dist) || dist <= 0) return;
         let fare;
-        if (dist <= 2) fare = 20;
-        else if (dist <= 6) fare = 25;
-        else if (dist <= 10) fare = 30;
-        else if (dist <= 14) fare = 35;
-        else if (dist <= 18) fare = 40;
-        else fare = 50;
+        if (dist <= 2) fare = 10;
+        else if (dist <= 5) fare = 15;
+        else if (dist <= 8) fare = 20;
+        else if (dist <= 12) fare = 25;
+        else if (dist <= 15) fare = 30;
+        else if (dist <= 20) fare = 40;
+        else if (dist <= 25) fare = 50;
+        else fare = 60;
         setCalculatedFare(fare);
     };
 

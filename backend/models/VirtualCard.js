@@ -31,7 +31,11 @@ const VirtualCardSchema = new mongoose.Schema({
     },
     expiryDate: {
         type: String,
-        default: '08/29'
+        trim: true
+    },
+    cvv: {
+        type: String,
+        trim: true
     },
     createdAt: {
         type: Date,

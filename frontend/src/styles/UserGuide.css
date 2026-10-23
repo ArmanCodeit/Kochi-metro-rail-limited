@@ -16,8 +16,8 @@
     border-bottom: 1px solid #e2e8f0;
     padding: 0.85rem 1.5rem;
     position: sticky;
-    top: 75px;
-    z-index: 20;
+    top: 0;
+    z-index: 50;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -215,6 +215,7 @@
     border: 1px solid #e2e8f0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     margin-bottom: 2rem;
+    scroll-margin-top: 80px;
 }
 
 .section-title-row {
@@ -488,5 +489,23 @@
     }
     .userguide-title {
         font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .userguide-hero {
+        padding: 1.5rem 1rem;
+    }
+    .userguide-title {
+        font-size: 1.4rem;
+    }
+    .userguide-lead {
+        font-size: 0.95rem;
+    }
+    .userguide-step-card {
+        padding: 1.25rem 1rem;
+    }
+    .userguide-footer-cta {
+        padding: 1.5rem 1rem;
     }
 }

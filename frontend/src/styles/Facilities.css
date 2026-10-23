@@ -450,6 +450,11 @@
 }
 
 @media (max-width: 768px) {
+    .facilities-page .facilities-hero-wrapper {
+        padding: 24px 16px;
+        min-height: auto;
+    }
+
     .facilities-page .facilities-hero-img-left,
     .facilities-page .facilities-hero-img-right {
         display: none;
@@ -463,7 +468,31 @@
         font-size: 1.8rem;
     }
 
+    .facilities-page .facilities-main-container {
+        padding: 0 16px;
+        margin-top: 1.5rem;
+    }
+
+    .facilities-page .facilities-control-bar {
+        padding: 1.2rem 1rem;
+    }
+
     .facilities-page .facilities-cards-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .facilities-page .facilities-hero-center h1 {
+        font-size: 1.5rem;
+    }
+
+    .facilities-page .facilities-hero-center p {
+        font-size: 0.9rem;
+    }
+
+    .facilities-page .facilities-tab-pill {
+        padding: 6px 14px;
+        font-size: 0.82rem;
     }
 }

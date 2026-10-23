@@ -22,9 +22,11 @@
     background: #ffffff;
     width: 100%;
     max-width: 480px;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow-y: auto;
     border-radius: 20px;
     box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
-    overflow: hidden;
     position: relative;
     animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -256,4 +258,22 @@
     background: #ecfdf5;
     border: 1px solid #a7f3d0;
     color: #047857;
+}
+
+@media (max-width: 420px) {
+    .recharge-modal-backdrop {
+        padding: 0.5rem;
+    }
+
+    .modal-header-banner {
+        padding: 1.2rem 1rem;
+    }
+
+    .modal-body {
+        padding: 1.2rem 1rem;
+    }
+
+    .quick-amount-chips {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

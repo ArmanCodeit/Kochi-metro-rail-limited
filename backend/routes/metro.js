@@ -22,25 +22,19 @@ try {
     localTrains = [];
 }
 
-// Kochi Metro Stations Data (aligned with frontend codes)
-const kochiMetroStations = [
-    { stationId: 'ALV', name: 'Aluva', code: 'ALV', line: 'Line 1', order: 1 },
-    { stationId: 'PUL', name: 'Pulinchodu', code: 'PUL', line: 'Line 1', order: 2 },
-    { stationId: 'COM', name: 'Companypady', code: 'COM', line: 'Line 1', order: 3 },
-    { stationId: 'SNJ', name: 'SN Junction', code: 'SNJ', line: 'Line 1', order: 4 },
-    { stationId: 'AMB', name: 'Ambattukavu', code: 'AMB', line: 'Line 1', order: 5 },
-    { stationId: 'KAK', name: 'Kakkanad', code: 'KAK', line: 'Line 1', order: 6 },
-    { stationId: 'PAL', name: 'Palarivattom', code: 'PAL', line: 'Line 1', order: 7 },
-    { stationId: 'EDA', name: 'Edapally', code: 'EDA', line: 'Line 1', order: 8 },
-    { stationId: 'MUT', name: 'Muttom', code: 'MUT', line: 'Line 1', order: 9 },
-    { stationId: 'KAL', name: 'Kaloor', code: 'KAL', line: 'Line 1', order: 10 },
-    { stationId: 'LIS', name: 'Lissie', code: 'LIS', line: 'Line 1', order: 11 },
-    { stationId: 'MGR', name: 'M.G. Road', code: 'MGR', line: 'Line 1', order: 12 },
-    { stationId: 'ERS', name: 'Ernakulam South', code: 'ERS', line: 'Line 1', order: 13 },
-    { stationId: 'VYT', name: 'Vyttila', code: 'VYT', line: 'Vyttila Extension', order: 14 },
-    { stationId: 'THY', name: 'Thykoodam', code: 'THY', line: 'Vyttila Extension', order: 15 },
-    { stationId: 'SEA', name: 'Seaport', code: 'SEA', line: 'Vyttila Extension', order: 16 }
-];
+const { getAllUniqueStations, resolveStation, findRoutes } = require('../utils/metroNetwork');
+
+// Authoritative Kochi Metro Stations Data (all 52 stations across 7 lines)
+const kochiMetroStations = getAllUniqueStations().map((st, i) => ({
+    stationId: st.code,
+    name: st.name,
+    code: st.code,
+    line: (st.lines && st.lines.length) ? st.lines.join(' / ') : 'Blue Line',
+    order: i + 1,
+    lat: st.lat,
+    lng: st.lng,
+    isInterchange: st.isInterchange
+}));
 
 // Helper: read/write simple JSON fallback files when MongoDB unavailable
 const readJsonSync = (p, fallback) => {
@@ -212,27 +206,22 @@ router.post('/book', async (req, res) => {
         if (type === 'single') {
             if (!fromStation || !toStation) return res.status(400).json({ message: 'fromStation and toStation are required for single journey' });
 
-            let from = null, to = null;
-            if (isDbConnected()) {
-                try {
-                    from = await Station.findOne({ code: fromStation });
-                    to = await Station.findOne({ code: toStation });
-                } catch (e) {
-                    from = null; to = null;
-                }
+            const allStns = getAllUniqueStations();
+            const validFrom = resolveStation(fromStation, allStns);
+            const validTo = resolveStation(toStation, allStns);
+
+            if (!validFrom || !validTo) {
+                return res.status(400).json({ message: 'Invalid stations' });
             }
 
-            if (!from || !to) {
-                const st = getStationsFallback();
-                from = st.find(s => s.code === fromStation) || null;
-                to = st.find(s => s.code === toStation) || null;
+            const routes = findRoutes(validFrom.name, validTo.name);
+            if (routes && routes.length > 0) {
+                fare = routes[0].fare;
+            } else {
+                fare = 20;
             }
-
-            if (!from || !to) return res.status(400).json({ message: 'Invalid stations' });
-            const stops = Math.abs(from.order - to.order);
-            fare = 10 + (stops * 5);
-            fromCode = from.code;
-            toCode = to.code;
+            fromCode = validFrom.code;
+            toCode = validTo.code;
         } else if (type === 'day-pass') {
             fare = 80; // fixed example price
         } else if (type === 'weekly-pass') {
@@ -501,60 +490,38 @@ router.post('/calculate-fare', async (req, res) => {
     try {
         const { fromStation, toStation } = req.body;
 
-        let from = null, to = null;
-        if (isDbConnected()) {
-            try {
-                from = await Station.findOne({ code: fromStation });
-                to = await Station.findOne({ code: toStation });
-            } catch (e) {
-                from = null; to = null;
-            }
-        }
-        if (!from || !to) {
-            const st = getStationsFallback();
-            from = st.find(s => s.code === fromStation) || null;
-            to = st.find(s => s.code === toStation) || null;
-        }
+        const allStns = getAllUniqueStations();
+        const validFrom = resolveStation(fromStation, allStns);
+        const validTo = resolveStation(toStation, allStns);
 
-        if (!from || !to) {
-            if (!res.headersSent) return res.status(400).json({ message: 'Invalid station codes' });
+        if (!validFrom || !validTo) {
+            if (!res.headersSent) return res.status(400).json({ message: 'Invalid station codes or names.' });
             return;
         }
 
-        const distance = Math.abs(from.order - to.order);
-        const baseFare = 10;
-        const farePerStation = 5;
-        const totalFare = baseFare + (distance * farePerStation);
-
-        // Calculate estimated time (2 minutes per station + 5 minutes base)
-        const estimatedTime = (distance * 2) + 5;
-
-        // Find intermediate stations
-        const startOrder = Math.min(from.order, to.order);
-        const endOrder = Math.max(from.order, to.order);
-
-        let intermediateStations = [];
-        if (isDbConnected()) {
-            try {
-                intermediateStations = await Station.find({ order: { $gt: startOrder, $lt: endOrder } }).sort('order');
-            } catch (e) {
-                intermediateStations = getStationsFallback().filter(s => s.order > startOrder && s.order < endOrder).sort((a, b) => a.order - b.order);
-            }
-        } else {
-            intermediateStations = getStationsFallback().filter(s => s.order > startOrder && s.order < endOrder).sort((a, b) => a.order - b.order);
+        const routes = findRoutes(validFrom.name, validTo.name);
+        if (!routes || routes.length === 0) {
+            if (!res.headersSent) return res.status(404).json({ message: 'No connected metro routes found between these stations.' });
+            return;
         }
 
+        const primaryRoute = routes[0];
+        const intermediateStations = primaryRoute.fullPath.slice(1, -1);
+
         if (!res.headersSent) res.json({
-            fromStation: from.name,
-            toStation: to.name,
-            distance: distance + 1, // +1 to include destination
-            totalFare: totalFare,
-            estimatedTime: estimatedTime,
-            intermediateStations: intermediateStations.map(s => s.name),
+            fromStation: validFrom.name,
+            toStation: validTo.name,
+            distance: primaryRoute.distance,
+            totalFare: primaryRoute.fare,
+            estimatedTime: primaryRoute.estimatedMinutes,
+            intermediateStations: intermediateStations,
+            transfers: primaryRoute.transfers,
+            routesCount: routes.length,
+            routes: routes,
             breakdown: {
-                baseFare: baseFare,
-                stationFare: distance * farePerStation,
-                stationsTravelled: distance + 1
+                baseFare: 10,
+                stationFare: Math.max(0, primaryRoute.fare - 10),
+                stationsTravelled: primaryRoute.totalStops + 1
             }
         });
     } catch (error) {

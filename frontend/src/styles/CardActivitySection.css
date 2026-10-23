@@ -89,6 +89,69 @@
     box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.15);
 }
 
+/* ── Route Alternatives Grid & Cards ── */
+.route-alternatives-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.route-alternative-btn {
+    padding: 0.5rem 0.4rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    cursor: pointer;
+    text-align: left;
+    min-width: 0;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.route-alternative-btn:hover {
+    border-color: #059db2;
+    background: #f0fdfa;
+}
+
+.route-alternative-btn.selected {
+    border: 2px solid #059db2;
+    background: #ecfeff;
+}
+
+.route-alternative-header {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #64748b;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.route-alternative-btn.selected .route-alternative-header {
+    color: #059db2;
+}
+
+.route-alternative-summary {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.25;
+    margin-top: 2px;
+    word-break: break-word;
+}
+
+@media (max-width: 600px) {
+    .route-alternatives-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+}
+
 .journey-route-preview {
     background: #f0fdfa;
     border: 1px dashed #5eead4;
@@ -314,5 +377,30 @@
     }
     .card-activity-container {
         margin-top: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .card-activity-container {
+        padding: 0 1rem;
+    }
+    .activity-card-panel {
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+    }
+    .panel-title {
+        font-size: 1.05rem;
+    }
+    .station-select {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.8rem;
+    }
+    .action-btn-row {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .action-btn-row button {
+        width: 100%;
+        justify-content: center;
     }
 }

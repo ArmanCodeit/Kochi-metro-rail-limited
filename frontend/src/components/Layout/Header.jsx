@@ -8,20 +8,13 @@ const NAV_ITEMS = [
     { label: "Recharge", page: "recharge" },
     { label: "Facilities", page: "facilities" },
     { label: "Plan Your Trip", page: "findmetro" },
-    { label: "Help & Contact", page: "help" },
     { label: "Book Ticket", page: "findmetro", highlight: true },
     { label: "FAQ's", page: "faq" },
 ];
 
 const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPage }) => {
-    const [search, setSearch] = useState("");
     const [fetchedName, setFetchedName] = useState("");
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    React.useEffect(() => {
-        const timerId = setInterval(() => setCurrentTime(new Date()), 1000);
-        return () => clearInterval(timerId);
-    }, []);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     React.useEffect(() => {
         const fetchUserData = async () => {
@@ -45,39 +38,24 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
         fetchUserData();
     }, [isAuthenticated]);
 
+    // Close mobile menu when screen resizes to desktop
+    React.useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 900) setMobileMenuOpen(false);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const fullName = fetchedName || user?.fullName || user?.name || "Nandigam Tarun";
     const initial = fullName.charAt(0).toUpperCase();
-    const nav = (page) => { if (page && onNavigate) onNavigate(page); };
+    const nav = (page) => {
+        setMobileMenuOpen(false);
+        if (page && onNavigate) onNavigate(page);
+    };
 
     return (
         <header className="main-header">
-
-            {/* ── TOP UTILITY BAR ── */}
-            <div className="top-bar">
-                <div className="top-left">
-                    <span>Follow us on :</span>
-                    <div className="social-icons">
-                        <span title="Facebook">f</span>
-                        <span title="X">𝕏</span>
-                        <span title="Instagram">◎</span>
-                        <span title="YouTube">▶</span>
-                    </div>
-                </div>
-                <div className="top-right">
-                    <span>മലയ</span>
-                    <span className="divider">|</span>
-                    <span>English</span>
-                    <span className="divider">|</span>
-                    <span onClick={() => nav(isAuthenticated ? "home" : "signin")}>For Passengers</span>
-                    <span className="divider">|</span>
-                    <span>For Corporates</span>
-                    <span className="divider">|</span>
-                    <span className="live-clock" style={{ fontWeight: 600, color: '#0da1a6' }}>
-                        {currentTime.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                    </span>
-                </div>
-            </div>
-
             {/* ── MAIN HEADER BODY: Left | Middle | Right ── */}
             <div className="header-body">
 
@@ -95,10 +73,10 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                     </div>
                 </div>
 
-                {/* ── MIDDLE: Top row + Bottom nav row ── */}
+                {/* ── MIDDLE: Top row + Bottom nav row (Desktop/Tablet) ── */}
                 <div className="header-middle">
 
-                    {/* Row 1: Feedback | Helpline | Search */}
+                    {/* Row 1: Feedback | Helpline */}
                     <div className="middle-top-row">
                         <button
                             className="feedback-btn"
@@ -115,26 +93,6 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                             onClick={() => alert("Emergency Helpline: 1800-425-8022")}
                             title="24 Hour Emergency Helpline: 1800-425-8022"
                         />
-
-                        {currentPage !== 'home' && (
-                            <div className="search-box">
-                                <input
-                                    type="text"
-                                    placeholder="Search…"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    aria-label="Search"
-                                />
-                                <button aria-label="Submit search" className="search-icon-btn">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                        stroke="#111" strokeWidth="2.5"
-                                        strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="11" cy="11" r="8" />
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                    </svg>
-                                </button>
-                            </div>
-                        )}
                     </div>
 
                     {/* Row 2: Navigation links */}
@@ -169,7 +127,7 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                     </nav>
                 </div>
 
-                {/* ── RIGHT: Auth panel ── */}
+                {/* ── RIGHT: Auth panel (Desktop) ── */}
                 <div className="header-right">
                     {isAuthenticated ? (
                         <div className="user-section">
@@ -203,7 +161,105 @@ const Header = ({ isAuthenticated = false, user, onLogout, onNavigate, currentPa
                     )}
                 </div>
 
+                {/* ── MOBILE HAMBURGER TOGGLE ── */}
+                <button
+                    type="button"
+                    className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                >
+                    <span className="toggle-bar"></span>
+                    <span className="toggle-bar"></span>
+                    <span className="toggle-bar"></span>
+                </button>
+
             </div>
+
+            {/* ── RESPONSIVE MOBILE NAVIGATION DRAWER ── */}
+            {mobileMenuOpen && (
+                <div className="mobile-nav-drawer open">
+                    <nav className="mobile-nav-links" aria-label="Mobile navigation">
+                        {NAV_ITEMS.map((item) => (
+                            <a
+                                key={item.label}
+                                className={[
+                                    "mobile-nav-link",
+                                    item.highlight ? "nav-highlight" : "",
+                                    currentPage === item.page && item.page ? "active" : "",
+                                ].filter(Boolean).join(" ")}
+                                onClick={() => {
+                                    if (item.page) {
+                                        nav(item.page);
+                                    } else {
+                                        alert(`${item.label} — coming soon`);
+                                    }
+                                }}
+                            >
+                                {item.label}
+                            </a>
+                        ))}
+                        {isAuthenticated && (
+                            <a
+                                className={["mobile-nav-link", currentPage === "myaccount" ? "active" : ""].filter(Boolean).join(" ")}
+                                onClick={() => nav("myaccount")}
+                            >
+                                My Account
+                            </a>
+                        )}
+                    </nav>
+
+                    <div className="mobile-nav-auth">
+                        {isAuthenticated ? (
+                            <div className="mobile-user-box">
+                                <div className="mobile-user-name" onClick={() => nav("myaccount")}>
+                                    👤 {fullName}
+                                </div>
+                                {onLogout && (
+                                    <button
+                                        type="button"
+                                        className="mobile-logout-btn"
+                                        onClick={() => {
+                                            setMobileMenuOpen(false);
+                                            onLogout();
+                                        }}
+                                    >
+                                        Sign Out
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="mobile-auth-buttons">
+                                <button type="button" className="btn-signin" onClick={() => nav("signin")}>
+                                    Sign In
+                                </button>
+                                <button type="button" className="btn-signup" onClick={() => nav("signup")}>
+                                    Sign Up
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mobile-nav-footer">
+                        <button
+                            type="button"
+                            className="mobile-feedback-btn"
+                            onClick={() => {
+                                setMobileMenuOpen(false);
+                                alert("Feedback form coming soon!");
+                            }}
+                        >
+                            <span className="feedback-icon">✉</span>
+                            For Feedback / Complaints Click Here
+                        </button>
+                        <div
+                            className="mobile-helpline-tag"
+                            onClick={() => alert("Emergency Helpline: 1800-425-8022")}
+                        >
+                            🚨 24 Hour Emergency Helpline: <strong>1800-425-8022</strong>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

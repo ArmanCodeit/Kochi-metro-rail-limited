@@ -3,6 +3,8 @@ import '../styles/Recharge.css';
 import VirtualMetroCard from '../components/VirtualCard/VirtualMetroCard';
 import RechargeModal from '../components/VirtualCard/RechargeModal';
 import CardActivitySection from '../components/VirtualCard/CardActivitySection';
+import RechargeOtherCard from '../components/VirtualCard/RechargeOtherCard';
+import CardTransferSection from '../components/VirtualCard/CardTransferSection';
 
 const stationBadges = [
     { name: "Aluva", color: "#0ea5e9" },
@@ -185,6 +187,36 @@ const Recharge = ({ onNavigate }) => {
                 isAuthenticated={isAuthenticated}
                 onNavigate={onNavigate}
             />
+
+            {/* Extended Card Services: 1. Recharge Other Card & 2. Recharge Card via Card */}
+            <section className="extended-card-services-container" id="extended-services">
+                <div className="extended-services-header">
+                    <span className="services-eyebrow">KMRL EXTENDED SERVICES</span>
+                    <h2 className="services-main-title">Card Recharge & Balance Transfer</h2>
+                    <p className="services-subtitle">
+                        Top-up any passenger's metro card via Razorpay or transfer funds directly from your virtual card
+                    </p>
+                </div>
+
+                <div className="extended-services-grid">
+                    {/* Feature 1: Recharge Other Card */}
+                    <RechargeOtherCard
+                        token={token}
+                        isAuthenticated={isAuthenticated}
+                        onSuccess={fetchCard}
+                        onNavigate={onNavigate}
+                    />
+
+                    {/* Feature 2: Recharge Card via Card (Internal Peer Transfer) */}
+                    <CardTransferSection
+                        card={card}
+                        token={token}
+                        isAuthenticated={isAuthenticated}
+                        onSuccess={handleCardUpdated}
+                        onNavigate={onNavigate}
+                    />
+                </div>
+            </section>
 
             {/* Stations Banner */}
             <section className="stations-banner">

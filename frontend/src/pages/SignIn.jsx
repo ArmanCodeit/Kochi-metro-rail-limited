@@ -18,8 +18,9 @@ const EyeOffIcon = () => (
 );
 
 const RefreshIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <polyline points="23 4 23 10 17 10" />
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
     </svg>
 );
 
@@ -87,6 +88,12 @@ function SignIn({ onNavigate, onLogin }) {
         const newCaptcha = generateCaptcha();
         setCaptcha(newCaptcha);
         setCaptchaImage(generateCaptchaImage(newCaptcha));
+        setFormData(prev => ({ ...prev, captcha: '' }));
+        setErrors(prev => {
+            const next = { ...prev };
+            delete next.captcha;
+            return next;
+        });
     };
 
     const handleInputChange = (e) => {
@@ -116,9 +123,10 @@ function SignIn({ onNavigate, onLogin }) {
             newErrors.password = 'Password is required';
         }
 
-        if (!formData.captcha.trim()) {
+        const enteredCaptcha = (formData.captcha || '').trim();
+        if (!enteredCaptcha) {
             newErrors.captcha = 'Please enter CAPTCHA';
-        } else if (formData.captcha.toLowerCase() !== captcha.toLowerCase()) {
+        } else if (enteredCaptcha.toLowerCase() !== captcha.trim().toLowerCase()) {
             newErrors.captcha = 'CAPTCHA is incorrect';
             generateNewCaptcha();
         }
@@ -350,8 +358,8 @@ function SignIn({ onNavigate, onLogin }) {
                                             type="button"
                                             className="refresh-captcha-btn"
                                             onClick={generateNewCaptcha}
-                                            title="Refresh CAPTCHA code"
-                                            aria-label="Refresh CAPTCHA code"
+                                            title="Refresh CAPTCHA"
+                                            aria-label="Refresh CAPTCHA"
                                         >
                                             <RefreshIcon />
                                         </button>

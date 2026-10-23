@@ -21,8 +21,37 @@ const CardTransactionSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['recharge', 'fare_deduction'],
+        enum: ['recharge', 'fare_deduction', 'card_transfer', 'transfer_debit', 'transfer_credit'],
         required: true
+    },
+    senderCardId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'VirtualCard',
+        default: null,
+        index: true
+    },
+    recipientCardId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'VirtualCard',
+        default: null,
+        index: true
+    },
+    initiatingUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null,
+        index: true
+    },
+    recipientUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null,
+        index: true
+    },
+    transferCategory: {
+        type: String,
+        enum: ['self_recharge', 'other_card_recharge', 'card_to_card_transfer', 'metro_journey', null],
+        default: null
     },
     amount: {
         type: Number,
@@ -70,6 +99,12 @@ const CardTransactionSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    idempotencyKey: {
+        type: String,
+        default: null,
+        sparse: true,
+        index: true
+    },
     description: {
         type: String,
         default: ''
@@ -77,8 +112,13 @@ const CardTransactionSchema = new mongoose.Schema({
     journeyDetails: {
         fromStation: { type: String, default: null },
         toStation: { type: String, default: null },
+        routeId: { type: String, default: null },
+        routeName: { type: String, default: null },
         distance: { type: Number, default: 0 },
-        fare: { type: Number, default: 0 }
+        fare: { type: Number, default: 0 },
+        totalStops: { type: Number, default: 0 },
+        transfers: { type: Number, default: 0 },
+        interchanges: [{ type: String }]
     },
     createdAt: {
         type: Date,
@@ -90,6 +130,9 @@ const CardTransactionSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+CardTransactionSchema.index({ userId: 1, createdAt: -1 });
+CardTransactionSchema.index({ cardId: 1, createdAt: -1 });
 
 CardTransactionSchema.pre('save', function (next) {
     this.updatedAt = Date.now();

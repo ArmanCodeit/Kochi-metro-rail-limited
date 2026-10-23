@@ -27,6 +27,21 @@ const ensureDefaultUsers = async () => {
             console.log('Default customer accounts created: testuser / ZAB');
         }
 
+        // ── Primary Commuter account (arman) ────────────────────────────────
+        const armanExists = await User.findOne({
+            $or: [{ email: 'armansingh7856@gmail.com' }, { username: 'armansingh7856' }]
+        });
+        if (!armanExists) {
+            await User.create({
+                fullName: 'Arman Singh',
+                email: 'armansingh7856@gmail.com',
+                username: 'armansingh7856',
+                password: 'Arman@7477',
+                userType: 'customer'
+            });
+            console.log('Commuter account for armansingh7856@gmail.com initialized.');
+        }
+
         // ── Station Master default account ──────────────────────────────────
         const smExists = await User.findOne({ userType: 'station_master' });
         if (!smExists) {
@@ -61,9 +76,45 @@ const ensureDefaultUsers = async () => {
     }
 };
 
+const Station = require('./models/Station');
+const { getAllUniqueStations } = require('./utils/metroNetwork');
+const ensureDefaultStations = async () => {
+    try {
+        const count = await Station.countDocuments();
+        const unique = getAllUniqueStations();
+        if (count < unique.length) {
+            for (let i = 0; i < unique.length; i++) {
+                const st = unique[i];
+                await Station.updateOne(
+                    { code: st.code },
+                    {
+                        stationId: st.code,
+                        name: st.name,
+                        code: st.code,
+                        line: st.lines ? st.lines.join(' / ') : 'Blue Line',
+                        location: {
+                            latitude: st.lat,
+                            longitude: st.lng
+                        },
+                        facilities: ['Wheelchair Access', 'Smart Card Top-up', 'Lifts & Escalators'],
+                        platformCount: st.isInterchange ? 4 : 2,
+                        order: i + 1,
+                        status: 'Active'
+                    },
+                    { upsert: true }
+                );
+            }
+            console.log(`Synchronized ${unique.length} authoritative stations in MongoDB Atlas.`);
+        }
+    } catch (err) {
+        console.error('Error synchronizing stations:', err.message);
+    }
+};
+
 // Connect to MongoDB Atlas and seed development accounts if needed
 connectDB().then(() => {
     ensureDefaultUsers();
+    ensureDefaultStations();
 }).catch((err) => {
     console.error('Database connection error on server startup:', err.message);
 });

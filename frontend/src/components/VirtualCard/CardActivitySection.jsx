@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/CardActivitySection.css';
 
 const DEFAULT_STATIONS = [
@@ -111,6 +111,7 @@ const CardActivitySection = ({ card, token, onCardUpdated, onOpenRecharge, isAut
     }, [token, isAuthenticated]);
 
     const activeRoute = routes[selectedRouteIndex] || routes[0];
+    const isSubmittingRef = useRef(false);
 
     // Handle journey simulation (deducting from virtual card)
     const handleSimulateJourney = async () => {
@@ -124,9 +125,16 @@ const CardActivitySection = ({ card, token, onCardUpdated, onOpenRecharge, isAut
             return;
         }
 
+        if (isSubmittingRef.current || simulating) {
+            return;
+        }
+        isSubmittingRef.current = true;
+
         setSimulating(true);
         setTripMessage(null);
         setTripError(null);
+
+        const idempotencyKey = `TAP_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
         try {
             const response = await fetch('/api/card/simulate-journey', {
@@ -138,14 +146,15 @@ const CardActivitySection = ({ card, token, onCardUpdated, onOpenRecharge, isAut
                 body: JSON.stringify({
                     fromStation,
                     toStation,
-                    routeId: activeRoute.routeId
+                    routeId: activeRoute.routeId,
+                    idempotencyKey
                 })
             });
 
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setTripMessage(`🎉 Journey recorded! Traveled from ${fromStation} to ${toStation}. Fare of ₹${data.fare} deducted.`);
+                setTripMessage(data.message || `🎉 Journey recorded! Traveled from ${fromStation} to ${toStation}. Fare of ₹${data.fare} deducted.`);
                 if (typeof onCardUpdated === 'function') {
                     onCardUpdated(data.balance);
                 }
@@ -156,6 +165,7 @@ const CardActivitySection = ({ card, token, onCardUpdated, onOpenRecharge, isAut
         } catch (err) {
             setTripError('Error contacting metro server.');
         } finally {
+            isSubmittingRef.current = false;
             setSimulating(false);
         }
     };
@@ -323,26 +333,18 @@ const CardActivitySection = ({ card, token, onCardUpdated, onOpenRecharge, isAut
 
                         {/* Alternative Route Cards when multiple routes exist */}
                         {routes.length > 1 && (
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                            <div className="route-alternatives-container">
                                 {routes.map((r, idx) => (
                                     <button
                                         key={r.routeId}
                                         type="button"
                                         onClick={() => setSelectedRouteIndex(idx)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '0.5rem',
-                                            borderRadius: '8px',
-                                            border: selectedRouteIndex === idx ? '2px solid #059db2' : '1px solid #cbd5e1',
-                                            background: selectedRouteIndex === idx ? '#ecfeff' : '#f8fafc',
-                                            cursor: 'pointer',
-                                            textAlign: 'left'
-                                        }}
+                                        className={`route-alternative-btn ${selectedRouteIndex === idx ? 'selected' : ''}`}
                                     >
-                                        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: selectedRouteIndex === idx ? '#059db2' : '#64748b' }}>
+                                        <div className="route-alternative-header">
                                             {r.isRecommended ? '⭐ RECOMMENDED' : `ALTERNATIVE ${idx + 1}`}
                                         </div>
-                                        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>
+                                        <div className="route-alternative-summary">
                                             {r.transfers === 0 ? 'Direct' : `${r.transfers} Transfer`} • {r.estimatedMinutes}m
                                         </div>
                                     </button>

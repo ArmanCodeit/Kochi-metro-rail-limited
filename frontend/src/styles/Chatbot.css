@@ -375,19 +375,27 @@
 }
 
 @media (max-width: 480px) {
+    .chatbot-container {
+        bottom: 16px;
+        right: 16px;
+    }
+
     .chatbot-window {
-        bottom: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
         right: 0;
+        bottom: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         border-radius: 0;
         border: none;
+        z-index: 10000;
     }
 
     .chatbot-toggle-btn {
-        width: 56px;
-        height: 56px;
-        bottom: 16px;
-        right: 16px;
+        width: 54px;
+        height: 54px;
     }
 }

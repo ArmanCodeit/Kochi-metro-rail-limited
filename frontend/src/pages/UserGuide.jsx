@@ -2,6 +2,10 @@ import React from 'react';
 import '../styles/UserGuide.css';
 
 function UserGuide({ onNavigate }) {
+    React.useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, []);
+
     const handleNav = (page) => {
         if (typeof onNavigate === 'function') {
             onNavigate(page);
@@ -12,7 +16,7 @@ function UserGuide({ onNavigate }) {
                 ticket: '/ticket',
                 myaccount: '/myaccount',
                 signin: '/signin',
-                help: '/help'
+                help: '/'
             };
             window.location.assign(routes[page] || '/');
         }

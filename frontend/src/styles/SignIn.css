@@ -492,9 +492,8 @@
 }
 
 .signin-page .captcha-code-input {
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     font-weight: 700;
-    text-transform: uppercase;
     text-align: center;
 }
 
@@ -682,5 +681,53 @@
 
     .signin-page .captcha-row {
         grid-template-columns: 120px 42px 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .signin-page .auth-main-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .signin-page .auth-form-side {
+        padding: 1.5rem 1rem;
+    }
+
+    .signin-page .form-title {
+        font-size: 1.45rem;
+    }
+
+    .signin-page .form-subtitle {
+        font-size: 0.82rem;
+    }
+
+    .signin-page .auth-role-tabs {
+        gap: 0.35rem;
+    }
+
+    .signin-page .auth-role-tab {
+        padding: 0.5rem 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .signin-page .captcha-row {
+        grid-template-columns: 85px 36px 1fr;
+        gap: 6px;
+    }
+
+    .signin-page .captcha-input {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .signin-page .auth-form-side {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .signin-page .captcha-row {
+        grid-template-columns: 78px 34px 1fr;
+        gap: 4px;
     }
 }

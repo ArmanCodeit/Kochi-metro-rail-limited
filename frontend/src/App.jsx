@@ -15,7 +15,6 @@ import Recharge from './pages/Recharge';
 import MyAccount from './pages/MyAccount';
 import StationMasterDashboard from './pages/StationMasterDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
-import HelpAndContact from './pages/HelpAndContact';
 import FAQs from './pages/FAQs';
 import Facilities from './pages/Facilities';
 import UserGuide from './pages/UserGuide';
@@ -70,7 +69,7 @@ function AppInner() {
             ticket: '/ticket',
             recharge: '/recharge',
             myaccount: '/myaccount',
-            help: '/help',
+            help: '/',
             faq: '/faq',
             facilities: '/facilities',
             userguide: '/user-guide',
@@ -114,7 +113,8 @@ function AppInner() {
                     <Route path="/myaccount" element={<MyAccount user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/station-master" element={<StationMasterDashboard user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
                     <Route path="/officer-dashboard" element={<OfficerDashboard user={user} onLogout={handleLogout} onNavigate={onNavigate} />} />
-                    <Route path="/help" element={<HelpAndContact onNavigate={onNavigate} />} />
+                    <Route path="/help" element={<Navigate to="/" replace />} />
+                    <Route path="/contact" element={<Navigate to="/" replace />} />
                     <Route path="/faq" element={<FAQs onNavigate={onNavigate} />} />
                     {/* Catch-all: redirect unknown URLs to home */}
                     <Route path="*" element={<Navigate to="/" replace />} />

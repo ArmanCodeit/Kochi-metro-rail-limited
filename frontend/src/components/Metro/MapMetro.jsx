@@ -179,11 +179,25 @@ function MapMetro({
         setActiveLine(prev => (prev === lineId ? null : lineId));
     }, []);
 
-    // Station Click Handler
-    const handleStationSelect = useCallback((station, primaryLine) => {
+    // Resolve highlightedRoute (accepts either lat/lng array or station name strings)
+    const resolvedRouteCoords = useMemo(() => {
+        if (!highlightedRoute || !Array.isArray(highlightedRoute) || highlightedRoute.length === 0) return null;
+        return highlightedRoute.map(item => {
+            if (Array.isArray(item) && item.length >= 2) return [item[0], item[1]];
+            if (typeof item === 'string') {
+                const stn = allStations.find(s => s.name.toLowerCase() === item.toLowerCase() || s.code.toLowerCase() === item.toLowerCase());
+                return stn ? [stn.lat, stn.lng] : null;
+            }
+            if (item && item.lat && item.lng) return [item.lat, item.lng];
+            return null;
+        }).filter(Boolean);
+    }, [highlightedRoute, allStations]);
+
+    // Station Click Handler (supports direct click or explicit role: 'from' | 'to')
+    const handleStationSelect = useCallback((station, primaryLine, role = null) => {
         setSelectedStation(station);
         if (typeof onStationClick === 'function') {
-            onStationClick(station, primaryLine);
+            onStationClick(station, primaryLine, role);
         }
     }, [onStationClick]);
 
@@ -326,7 +340,7 @@ function MapMetro({
                 />
 
                 <MapController
-                    highlightedRoute={highlightedRoute}
+                    highlightedRoute={resolvedRouteCoords}
                     activeLineId={normalizedActiveLineId}
                     targetStation={selectedStation}
                     setZoomLevel={setZoomLevel}
@@ -389,9 +403,9 @@ function MapMetro({
                 })}
 
                 {/* ── Render Optional Highlighted Route ── */}
-                {highlightedRoute && highlightedRoute.length > 0 && (
+                {resolvedRouteCoords && resolvedRouteCoords.length > 0 && (
                     <Polyline
-                        positions={highlightedRoute}
+                        positions={resolvedRouteCoords}
                         pathOptions={{
                             color: '#0284c7',
                             weight: 8,
@@ -514,13 +528,26 @@ function MapMetro({
 
                                     {typeof onStationClick === 'function' && (
                                         <div className="kmrl-popup-action">
-                                            <button
-                                                type="button"
-                                                className="kmrl-popup-btn"
-                                                onClick={() => handleStationSelect(station, primaryLine)}
-                                            >
-                                                Select Station & Plan Route →
-                                            </button>
+                                            <div style={{ display: 'flex', gap: '6px', width: '100%', marginTop: '4px' }}>
+                                                <button
+                                                    type="button"
+                                                    className="kmrl-popup-btn"
+                                                    style={{ flex: 1, padding: '7px 4px', fontSize: '0.76rem' }}
+                                                    onClick={() => handleStationSelect(station, primaryLine, 'from')}
+                                                    title={`Set ${station.name} as Origin`}
+                                                >
+                                                    Set Origin (From)
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="kmrl-popup-btn"
+                                                    style={{ flex: 1, padding: '7px 4px', fontSize: '0.76rem', background: '#059db2' }}
+                                                    onClick={() => handleStationSelect(station, primaryLine, 'to')}
+                                                    title={`Set ${station.name} as Destination`}
+                                                >
+                                                    Set Dest (To)
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

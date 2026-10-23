@@ -58,7 +58,7 @@
     border-radius: 12px;
     padding: 0.8rem 1.1rem;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    max-width: 290px;
+    max-width: 320px;
 }
 
 .legend-title {
@@ -240,4 +240,67 @@
     opacity: 0.45;
     font-weight: 700;
     letter-spacing: 2px;
+}
+
+/* ── Mobile Responsive Rules ── */
+@media (max-width: 600px) {
+    .schematic-map-container {
+        min-height: 380px;
+        height: 420px;
+        border-radius: 12px;
+    }
+
+    .map-control-panel {
+        top: 0.6rem;
+        right: 0.6rem;
+        gap: 0.35rem;
+    }
+
+    .map-ctrl-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+
+    .map-dmrc-legend {
+        top: 0.6rem;
+        left: 0.6rem;
+        padding: 0.5rem 0.75rem;
+        max-width: calc(100% - 60px);
+        font-size: 0.72rem;
+        border-radius: 8px;
+    }
+
+    .legend-title {
+        font-size: 0.75rem;
+        margin-bottom: 0.3rem;
+        padding-bottom: 0.2rem;
+    }
+
+    .legend-row {
+        font-size: 0.68rem;
+        gap: 0.4rem;
+    }
+
+    .map-route-indicator {
+        bottom: 0.6rem;
+        left: 0.6rem;
+        right: 0.6rem;
+        padding: 0.6rem 0.9rem;
+        flex-direction: column;
+        gap: 0.4rem;
+        text-align: center;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 380px) {
+    .map-dmrc-legend {
+        max-width: calc(100% - 50px);
+        padding: 0.4rem 0.5rem;
+    }
+
+    .legend-row {
+        font-size: 0.62rem;
+    }
 }

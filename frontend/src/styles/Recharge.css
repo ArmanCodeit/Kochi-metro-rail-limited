@@ -412,7 +412,692 @@
 }
 
 @media (max-width: 600px) {
+    .recharge-hero-section {
+        padding: 3rem 1.25rem 2rem 1.25rem;
+        gap: 2rem;
+        min-height: auto;
+    }
+
+    .hero-title {
+        font-size: 2.3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .btn-recharge,
+    .btn-user-guide {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        text-align: center;
+    }
+
+    .hero-image-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .stations-banner {
+        padding: 2rem 1rem;
+        gap: 1.5rem;
+    }
+
+    .stations-list-pills {
+        gap: 0.4rem;
+        justify-content: center;
+    }
+
     .glance-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .how-to-load-section {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero-title {
+        font-size: 1.95rem;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   EXTENDED CARD SERVICES: RECHARGE OTHER CARD & RECHARGE CARD VIA CARD
+   ══════════════════════════════════════════════════════════════════════════════ */
+.extended-card-services-container {
+    padding: 3rem 10% 4.5rem 10%;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-top: 1px solid #e2e8f0;
+}
+
+.extended-services-header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 2.5rem auto;
+}
+
+.services-eyebrow {
+    display: inline-block;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #059db2;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: #ecfeff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    border: 1px solid #cffafe;
+    margin-bottom: 0.75rem;
+}
+
+.services-main-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+}
+
+.services-subtitle {
+    font-size: 0.96rem;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.extended-services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+}
+
+/* ── Panel Card Box ── */
+.extended-feature-panel {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+}
+
+.extended-feature-panel:hover {
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.07);
+    border-color: #cbd5e1;
+}
+
+.panel-inner {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ── Header ── */
+.panel-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.panel-title-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.panel-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.panel-icon-badge.transfer {
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+
+.feature-section-heading {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.25rem 0;
+    line-height: 1.25;
+}
+
+.feature-section-sub {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.panel-badge-pill {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #059db2;
+    background: #ecfeff;
+    border: 1px solid #a5f3fc;
+    padding: 0.28rem 0.65rem;
+    border-radius: 50px;
+    white-space: nowrap;
+}
+
+.panel-badge-pill.internal {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+/* ── Status Banner ── */
+.feature-status-banner {
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.86rem;
+    animation: fadeInStatus 0.3s ease;
+}
+
+@keyframes fadeInStatus {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.feature-status-banner.success {
+    background: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+    color: #065f46;
+}
+
+.feature-status-banner.error {
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    color: #991b1b;
+}
+
+.status-banner-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.status-banner-text {
+    margin: 0.2rem 0 0.75rem 0;
+    font-size: 0.84rem;
+    color: #047857;
+    line-height: 1.4;
+}
+
+.status-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+    background: #ffffff;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #d1fae5;
+    margin-top: 0.6rem;
+}
+
+.status-meta-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.status-meta-value {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.status-meta-value.debit {
+    color: #dc2626;
+}
+
+.status-meta-value.mono {
+    font-family: monospace;
+    font-size: 0.78rem;
+    color: #059db2;
+}
+
+/* ── Form Body ── */
+.feature-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    flex: 1;
+}
+
+.feature-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.feature-input-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #334155;
+    letter-spacing: 0.2px;
+}
+
+.input-with-action {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.input-with-action:focus-within {
+    border-color: #059db2;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.15);
+}
+
+.input-prefix-icon {
+    display: flex;
+    align-items: center;
+    padding: 0 0.85rem;
+    font-size: 1.1rem;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.feature-text-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 600;
+    color: #0f172a;
+    background: transparent;
+    letter-spacing: 0.5px;
+}
+
+.feature-text-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+.btn-verify-card {
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 0 1.25rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    font-family: 'Urbanist', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-verify-card:hover:not(:disabled) {
+    background: #059db2;
+}
+
+.btn-verify-card:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ── Verified Card Indicator ── */
+.verified-card-badge {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+.verified-card-badge.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+}
+
+.verified-card-badge.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.verified-icon {
+    font-weight: 800;
+    background: #22c55e;
+    color: #ffffff;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+.holder-pill {
+    background: #ffffff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #dcfce7;
+    font-weight: 700;
+    color: #166534;
+}
+
+.status-pill.active {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* ── Amount Chips ── */
+.preset-chip-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+}
+
+.preset-amt-chip {
+    padding: 0.65rem 0.4rem;
+    border: 1.5px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #334155;
+    cursor: pointer;
+    font-family: 'Urbanist', sans-serif;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.preset-amt-chip:hover:not(:disabled) {
+    border-color: #059db2;
+    background: #f0fdfa;
+    color: #059db2;
+}
+
+.preset-amt-chip.active {
+    background: #059db2;
+    color: #ffffff;
+    border-color: #059db2;
+    box-shadow: 0 4px 10px rgba(5, 157, 178, 0.25);
+}
+
+.custom-amt-field {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    padding-left: 0.85rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-amt-field:focus-within {
+    border-color: #059db2;
+    box-shadow: 0 0 0 3px rgba(5, 157, 178, 0.15);
+}
+
+.currency-prefix {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #64748b;
+}
+
+.feature-text-input.custom-input {
+    padding-left: 0.4rem;
+}
+
+/* ── Sender Card Strip (Feature 2) ── */
+.sender-card-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 1.1rem 1.3rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+}
+
+.sender-label {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+
+.sender-card-number {
+    font-family: monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.sender-subtext {
+    font-size: 0.68rem;
+    color: #2dd4bf;
+    font-weight: 700;
+}
+
+.sender-balance-badge {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #22c55e;
+    letter-spacing: 0.3px;
+}
+
+/* ── Transfer Summary Strip ── */
+.transfer-summary-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+}
+
+.summary-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-col.text-right {
+    text-align: right;
+}
+
+.summary-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.summary-val {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: monospace;
+}
+
+.summary-val-highlight {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #059db2;
+}
+
+/* ── Primary Action Button ── */
+.btn-feature-primary {
+    background: #059db2;
+    color: #ffffff;
+    border: none;
+    padding: 0.95rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.96rem;
+    font-weight: 800;
+    font-family: 'Urbanist', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(5, 157, 178, 0.3);
+    transition: all 0.25s ease;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-feature-primary:hover:not(:disabled) {
+    background: #048294;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(5, 157, 178, 0.4);
+}
+
+.btn-feature-primary:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+    transform: none;
+}
+
+.feature-security-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-top: 0.2rem;
+}
+
+/* ── Review Breakdown Modal Card ── */
+.review-breakdown-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+}
+
+.row-label {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.row-value {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.row-value.note {
+    font-style: italic;
+    color: #475569;
+}
+
+.row-value-highlight {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #059db2;
+}
+
+.breakdown-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.3rem 0;
+}
+
+.modal-header-banner.transfer {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .extended-services-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .extended-card-services-container {
+        padding: 2.5rem 5% 3.5rem 5%;
+    }
+}
+
+@media (max-width: 600px) {
+    .panel-inner {
+        padding: 1.4rem;
+    }
+
+    .services-main-title {
+        font-size: 1.7rem;
+    }
+
+    .preset-chip-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .status-meta-grid {
         grid-template-columns: 1fr;
     }
 }

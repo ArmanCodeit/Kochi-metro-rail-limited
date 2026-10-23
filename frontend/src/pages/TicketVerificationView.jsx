@@ -102,14 +102,15 @@ const TicketVerificationView = ({ onNavigate }) => {
             </div>
 
             {/* Input form */}
-            <form onSubmit={handleFormSubmit} style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem' }}>
+            <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '2rem' }}>
                 <input
                     type="text"
                     value={ticketIdInput}
                     onChange={(e) => setTicketIdInput(e.target.value)}
                     placeholder="Enter Ticket ID (e.g. KMRL-XXXX-XXXX) or Scan QR..."
                     style={{
-                        flex: 1,
+                        flex: '1 1 240px',
+                        minWidth: 0,
                         padding: '0.8rem 1rem',
                         borderRadius: '10px',
                         border: '1.5px solid #cbd5e1',
@@ -122,6 +123,7 @@ const TicketVerificationView = ({ onNavigate }) => {
                     type="submit"
                     disabled={loading || !ticketIdInput.trim()}
                     style={{
+                        flex: '1 1 auto',
                         background: '#059db2',
                         color: '#ffffff',
                         border: 'none',
@@ -129,7 +131,8 @@ const TicketVerificationView = ({ onNavigate }) => {
                         borderRadius: '10px',
                         fontWeight: 800,
                         cursor: 'pointer',
-                        fontSize: '0.95rem'
+                        fontSize: '0.95rem',
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     {loading ? 'Scanning...' : 'Verify Gate Scan'}

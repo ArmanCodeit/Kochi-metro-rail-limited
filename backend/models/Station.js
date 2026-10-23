@@ -17,7 +17,6 @@ const StationSchema = new mongoose.Schema({
     },
     line: {
         type: String,
-        enum: ['Line 1', 'Line 2', 'Line 3', 'Vyttila Extension', 'Infopark Extension'],
         required: true
     },
     location: {

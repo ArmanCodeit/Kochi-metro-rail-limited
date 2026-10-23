@@ -295,15 +295,6 @@ const MyAccount = ({ user, onLogout, onNavigate }) => {
                         <li className={activeTab === 'transactions' ? 'active' : ''} onClick={() => setActiveTab('transactions')}>
                             My Transactions
                         </li>
-                        <li className={activeTab === 'lostitem' ? 'active' : ''} onClick={() => setActiveTab('lostitem')}>
-                            My Lost Item
-                        </li>
-                        <li className={activeTab === 'vigilance' ? 'active' : ''} onClick={() => setActiveTab('vigilance')}>
-                            Vigilance Complaint
-                        </li>
-                        <li className={activeTab === 'grievance' ? 'active' : ''} onClick={() => setActiveTab('grievance')}>
-                            Grievance Complaint
-                        </li>
                     </ul>
                     <div className="logout-section" onClick={onLogout}>
                         <span className="logout-text">Logout</span>
@@ -330,15 +321,6 @@ const MyAccount = ({ user, onLogout, onNavigate }) => {
                         </div>
 
                         <div className="profile-body">
-                            <div className="avatar-section">
-                                <div className="avatar-circle">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
-                                </div>
-                            </div>
-
                             <div className="form-section">
                                 <div className="form-group-title">
                                     <span>Personal Details</span>
@@ -770,7 +752,7 @@ const MyAccount = ({ user, onLogout, onNavigate }) => {
                     );
                 })()}
 
-                {['medical', 'lostitem'].includes(activeTab) && (
+                {activeTab === 'medical' && (
                     <div className="placeholder-section">
                         <h1>Coming Soon</h1>
                         <p>This module is currently under development.</p>

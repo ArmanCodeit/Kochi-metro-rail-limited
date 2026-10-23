@@ -907,8 +907,23 @@ function FindMetro({ onNavigate, user, onLogout }) {
                             <MapMetro
                                 height="100%"
                                 selectedLineId={selectedLine}
-                                highlightedRoute={null}
-                                onStationClick={(st) => setSelectedStation(st)}
+                                highlightedRoute={highlightedRouteStations}
+                                onStationClick={(st, primaryLine, role) => {
+                                    setSelectedStation(st);
+                                    if (role === 'from') {
+                                        setFromStation(st.name);
+                                    } else if (role === 'to') {
+                                        setToStation(st.name);
+                                    } else {
+                                        if (!fromStation) {
+                                            setFromStation(st.name);
+                                        } else if (!toStation || toStation === fromStation) {
+                                            setToStation(st.name);
+                                        } else {
+                                            setFromStation(st.name);
+                                        }
+                                    }
+                                }}
                             />
                         )}
                     </div>
