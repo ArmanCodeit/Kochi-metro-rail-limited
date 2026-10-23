@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Kochi Metro Rail Limited (KMRL) Web Application",
   "scripts": {
-    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "build": "cd backend && npm install && cd ../frontend && npm install --include=dev && npm run build",
     "start": "node backend/server.js"
   },
   "dependencies": {
